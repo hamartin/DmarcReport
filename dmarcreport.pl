@@ -25,14 +25,25 @@ sub parseXML($)
     return XMLin($fileName, KeyAttr => 'feedback', ForceArray => 1);
 }
 
-sub createDatabase()
+sub openDBH()
 {
-    my $dbh = DBI->connect(
+    return DBI->connect(
         "dbi:SQLite:dbname=$dbname",
         $user,
         $pass,
         { RaiseError => 1 }
     ) or die($DBI::errstr);
+}
+
+sub closeDBH($)
+{
+    my ($dbh) = @_;
+    $dbh->disconnect();
+}
+
+sub createDatabase()
+{
+    my $dbh = openDBH();
 
     $dbh->do('DROP TABLE IF EXISTS policy_published');
 
@@ -79,7 +90,14 @@ sub createDatabase()
     $dbh->do('CREATE INDEX report_metadata_fk ON records (metadata_fk)');
     $dbh->do('CREATE INDEX policy_published_fk ON records (published_fk)');
 
-    $dbh->disconnect();
+    closeDBH($dbh);
+}
+
+sub addReport($)
+{
+    my ($xmlref) = @_;
+    # Check if database exist, if not tell the user to create it.
+    # add three entries, one for each table in database.
 }
 
 #
@@ -89,7 +107,8 @@ sub createDatabase()
 getopts('cf:', \%opts);
 if(defined($opts{'f'})) {
     if($opts{'f'} =~ m/^(.*\.xml)$/) {
-        my $XML = parseXML($1);
+        my $xml = parseXML($1);
+        addReport($xml);
     } else {
         help();
     }
