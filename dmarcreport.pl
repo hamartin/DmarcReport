@@ -4,75 +4,101 @@ use strict;
 use warnings;
 
 use DBI;
-use XML::Simple;
+use Getopt::Std;
+use XML::Simple qw(:strict);
 
-#
-# Statics.
-#
+my %opts;
+my $user = 'default';
+my $pass = 'default';
+my $dbname = 'dmarcreport.db';
 
-my $uid  = 'STATIC';
-my $pwd  = 'STATIC';
-
-#
-# Functions.
-#
-
-sub openDB($$$)
+sub help()
 {
-    my ($db, $uid, $pwd) = @_;
-    my $dsn = "dbi:SQLite:dbname=$db";
-    my $dbh = DBI->connect($dsn, $uid, $pwd, { RaiseError => 1 }) or die("$DBI::errstr");
-    return $dbh;
+    my $exampleText = "Example: $0 -f <XMLFILE>  # Must match regex '^.*\\\.xml\$'\n" .
+                      "         $0 -c            # Create database in current folder.\n";
+    die($exampleText);
 }
 
-sub closeDB($)
+sub parseXML($)
 {
-    my ($dbh) = @_;
-    $dbh->disconnect;
+    my ($fileName) = @_;
+    return XMLin($fileName, KeyAttr => 'feedback', ForceArray => 1);
 }
 
-sub createDB($$$)
+sub createDatabase()
 {
-    my ($db, $uid, $pwd) = @_;
-    my $dbh = openDB($db, $uid, $pwd);
-    my $sth = $dbh->prepare("CREATE TABLE dmarcreport") or die("$DBI::errstr");
-    $sth->execute() or die("$DBI::errstr");
-    closeDB($dbh);
+    my $dbh = DBI->connect(
+        "dbi:SQLite:dbname=$dbname",
+        $user,
+        $pass,
+        { RaiseError => 1 }
+    ) or die($DBI::errstr);
+
+    $dbh->do('DROP TABLE IF EXISTS policy_published');
+
+    $dbh->do('CREATE TABLE policy_published(
+        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+        domain TEXT,
+        aspf TINYTEXT,
+        adkim TINYTEXT,
+        p TEXT,
+        pct INTEGER DEFAULT NULL
+        )');
+
+    $dbh->do('CREATE TABLE report_metadata(
+        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+        organization TEXT,
+        email TEXT,
+        extra_contact_information TEXT,
+        report_id TEXT,
+        date_range_begin INTEGER DEFAULT NULL,
+        date_range_end INTEGER DEFAULT NULL
+        )');
+
+    $dbh->do('CREATE TABLE records(
+        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+        source_ip CHAR(15) DEFAULT NULL,
+        count INTEGER DEFAULT NULL,
+        disposition CHAR(11) DEFAULT NULL,
+        dkim CHAR(11) DEFAULT NUll,
+        spf CHAR(11) DEFAULT NULL,
+        type CHAR(20) DEFAULT NULL,
+        comment TEXT,
+        header_from CHAR(255) DEFAULT NULL,
+        dkim_domain CHAR(255) DEFAULT NULL,
+        dkim_result CHAR(11) DEFAULT NULL,
+        dkim_hresult CHAR(255) DEFAULT NULL,
+        spf_domain CHAR(255) DEFAULT NULL,
+        spf_result CHAR(11) DEFAULT NULL,
+        metadata_fk UNSIGNED INTEGER NOT NULL,
+        published_fk UNSIGNED INTEGER NOT NULL,
+        FOREIGN KEY(metadata_fk) REFERENCES report_metadata(id),
+        FOREIGN KEY(published_fk) REFERENCES policy_published(id)
+    )');
+
+    $dbh->do('CREATE INDEX report_metadata_fk ON records (metadata_fk)');
+    $dbh->do('CREATE INDEX policy_published_fk ON records (published_fk)');
+
+    $dbh->disconnect();
 }
 
 #
-# Start of script.
+# BEGIN
 #
 
-if($#ARGV+1 ne 2) {
-    print "Example: $0 <FILE> <DB>\n";
-    print "         $0 CREATE <DB>\n";
-    exit(0);
+getopts('cf:', \%opts);
+if(defined($opts{'f'})) {
+    if($opts{'f'} =~ m/^(.*\.xml)$/) {
+        my $XML = parseXML($1);
+    } else {
+        help();
+    }
+} elsif(defined($opts{'c'})) {
+    createDatabase();
+} else {
+    help();
 }
 
-if(uc($ARGV[0]) =~ m/^CREATE$/) {
-    createDB($ARGV[1], $uid, $pwd);
-    exit(0);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-my $file = $ARGV[0];
-my $db   = $ARGV[1];
-
-my $xml = new XML::Simple;
-my $data = $xml->XMLin($file);
-
-
-use Data::Dumper;
-print Dumper($data);
+#
+# END
+#
