@@ -48,7 +48,7 @@ sub createDatabase()
     $dbh->do('DROP TABLE IF EXISTS policy_published');
 
     $dbh->do('CREATE TABLE policy_published(
-        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         domain TEXT,
         aspf TINYTEXT,
         adkim TINYTEXT,
@@ -93,11 +93,53 @@ sub createDatabase()
     closeDBH($dbh);
 }
 
+sub _addPolicyRecord($%)
+{
+    my ($dbh, %policy) = @_;
+
+    my $sth = $dbh->prepare('INSERT INTO policy_published("domain", "aspf", "adkim", "p", "pct") VALUES(?,?,?,?,?)');
+    $sth->execute(@{$policy{'domain'}}[0], @{$policy{'aspf'}}[0], @{$policy{'adkim'}}[0], @{$policy{'p'}}[0], @{$policy{'pct'}}[0]);
+    return $dbh->func('last_insert_rowid');
+}
+
+sub _addReportRecord($%)
+{
+    my ($dbh, %report) = @_;
+    my $sth = $dbh->prepare('INSERT INTO report_metadata("organization", "email", "extra_contact_information", "report_id", "date_range_begin", "date_range_end") VALUES(?,?,?,?,?,?)');
+    $sth->execute(@{$report{'org_name'}}[0], @{$report{'email'}}[0], , @{$report{'report_id'}}[0], @{%{@{$report{'date_range'}}[0]}{'begin'}}[0], @{%{@{$report{'date_range'}}[0]}{'end'}}[0]);
+    return $dbh->func('last_insert_rowid');
+}
+
+sub _addRecordRecord($$$%)
+{
+    my ($dbh, $policyID, $reportID, %record) = @_;
+}
+
 sub addReport($)
 {
     my ($xmlref) = @_;
-    # Check if database exist, if not tell the user to create it.
-    # add three entries, one for each table in database.
+    my $dbh = openDBH();
+
+    # Check if database exists before trying to add data to nothing.
+    my @tables = ('policy_published', 'report_metadata', 'records');
+    foreach my $table (@tables) {
+        my $sth = $dbh->prepare('SELECT name FROM sqlite_master WHERE type="table" AND name=?');
+        $sth->execute($table);
+        my ($name) = $sth->fetchrow();
+        if(!defined($name)) {
+            die("Could not find table $table.\nPlease create database first.\n");
+        }
+    }
+
+    my %policy = %{ @{ $xmlref->{'policy_published'} }[0] };
+    my %report = %{ @{ $xmlref->{'report_metadata'} }[0] };
+    my %record = %{ @{ $xmlref->{'record'} }[0] };
+
+    my $policyID = _addPolicyRecord($dbh, %policy);
+    my $reportID = _addReportRecord($dbh, %report);
+    _addRecordRecord($dbh, $policyID, $reportID, %record);
+
+    closeDBH($dbh);
 }
 
 #
