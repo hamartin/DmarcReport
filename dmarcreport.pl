@@ -8,6 +8,8 @@ use Getopt::Std;
 use XML::Simple qw(:strict);
 
 my %opts;
+
+my $DEBUG = 0;
 my $user = 'default';
 my $pass = 'default';
 my $dbname = 'dmarcreport.db';
@@ -17,6 +19,16 @@ sub help()
     my $exampleText = "Example: $0 -f <XMLFILE>  # Must match regex '^.*\\\.xml\$'\n" .
                       "         $0 -c            # Create database in current folder.\n";
     die($exampleText);
+}
+
+sub Dump
+{
+    my $var = shift;
+    my $die = shift;
+
+    use Data::Dumper;
+    print Dumper($var);
+    die("Dying\n") if($die);
 }
 
 sub parseXML($)
@@ -57,7 +69,7 @@ sub createDatabase()
         )');
 
     $dbh->do('CREATE TABLE report_metadata(
-        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         organization TEXT,
         email TEXT,
         extra_contact_information TEXT,
@@ -93,26 +105,98 @@ sub createDatabase()
     closeDBH($dbh);
 }
 
-sub _addPolicyRecord($%)
+sub addPolicyRecord($%)
 {
     my ($dbh, %policy) = @_;
 
+    my $domain = @{$policy{'domain'}}[0];
+    my $aspf   = @{$policy{'aspf'}}[0];
+    my $adkim  = @{$policy{'adkim'}}[0];
+    my $p      = @{$policy{'p'}}[0];
+    my $pct    = @{$policy{'pct'}}[0];
+
     my $sth = $dbh->prepare('INSERT INTO policy_published("domain", "aspf", "adkim", "p", "pct") VALUES(?,?,?,?,?)');
-    $sth->execute(@{$policy{'domain'}}[0], @{$policy{'aspf'}}[0], @{$policy{'adkim'}}[0], @{$policy{'p'}}[0], @{$policy{'pct'}}[0]);
+    $sth->execute($domain, $aspf, $adkim, $p, $pct);
+    die('ERROR! return code: '.$sth->err.' error msg: '.$sth->errstr."\n") if($sth->err);
+
     return $dbh->func('last_insert_rowid');
 }
 
-sub _addReportRecord($%)
+sub addReportRecord($%)
 {
     my ($dbh, %report) = @_;
-    my $sth = $dbh->prepare('INSERT INTO report_metadata("organization", "email", "extra_contact_information", "report_id", "date_range_begin", "date_range_end") VALUES(?,?,?,?,?,?)');
-    $sth->execute(@{$report{'org_name'}}[0], @{$report{'email'}}[0], , @{$report{'report_id'}}[0], @{%{@{$report{'date_range'}}[0]}{'begin'}}[0], @{%{@{$report{'date_range'}}[0]}{'end'}}[0]);
+
+    my $organization = @{$report{'org_name'}}[0];
+    my $email        = @{$report{'email'}}[0];
+    #my $extraCI     = ???
+    my $reportID     = @{$report{'report_id'}}[0];
+    my %dateRange    = %{@{$report{'date_range'}}[0]};
+    my $dateBegin    = @{$dateRange{'begin'}}[0];
+    my $dateEnd      = @{$dateRange{'end'}}[0];
+
+    my $sth = $dbh->prepare('SELECT 1 FROM report_metadata WHERE report_id=?');
+    $sth->execute($reportID);
+    $sth->fetchrow();
+    die('ERROR! return code: '.$sth->err.' error msg: '.$sth->errstr."\n") if($sth->err);
+    die("Report has already been added to database.\n") if($sth->rows() ne 0 && !$DEBUG);
+
+    $sth = $dbh->prepare('INSERT INTO report_metadata("organization", "email", "extra_contact_information", "report_id", "date_range_begin", "date_range_end") VALUES(?,?,?,?,?,?)');
+    $sth->execute($organization, $email, undef, $reportID, $dateBegin, $dateEnd);
+    die('ERROR! return code: '.$sth->err.' error msg: '.$sth->errstr."\n") if($sth->err);
+
     return $dbh->func('last_insert_rowid');
 }
 
-sub _addRecordRecord($$$%)
+sub addRecordRecord($$$%)
 {
     my ($dbh, $policyID, $reportID, %record) = @_;
+
+    my %identifiers = %{@{$record{'identifiers'}}[0]};
+    my %row = %{@{$record{'row'}}[0]};
+    my %policyEvaluated = %{@{$row{'policy_evaluated'}}[0]};
+    my %authResults = %{@{$record{'auth_results'}}[0]};
+    my %arDKIM = %{@{$authResults{'dkim'}}[0]};
+    my %arSPF = %{@{$authResults{'spf'}}[0]};
+
+    my $headerFrom = @{$identifiers{'header_from'}}[0];
+    my $count = @{$row{'count'}}[0];
+    my $sourceIP = @{$row{'source_ip'}}[0];
+    my $disposition = @{$policyEvaluated{'disposition'}}[0];
+    my $peDkim = @{$policyEvaluated{'dkim'}}[0];
+    my $peSpf = @{$policyEvaluated{'spf'}}[0];
+    my $arDkimDomain = @{$arDKIM{'domain'}}[0];
+    my $arDkimResult = @{$arDKIM{'result'}}[0];
+    my $arSpfDomain = @{$arSPF{'domain'}}[0];
+    my $arSpfResult = @{$arSPF{'result'}}[0];
+    #my $type             =
+    #my $comment          = 
+    my $metadataFK       = $reportID;
+    my $publishedFK      = $policyID;
+
+    #my $sth = $dbh->prepare('');
+    #$sth->execute();
+    #die('ERROR! return code: '.$sth->err.' error msg: '.$sth->errstr."\n") if($sth->err);
+
+    #return $dbh->func('last_insert_rowid');
+
+#        id UNSIGNED INTEGER NOT NULL PRIMARY KEY,
+#        source_ip CHAR(15) DEFAULT NULL,
+#        count INTEGER DEFAULT NULL,
+#        disposition CHAR(11) DEFAULT NULL,
+#        dkim CHAR(11) DEFAULT NUll,
+#        spf CHAR(11) DEFAULT NULL,
+#        type CHAR(20) DEFAULT NULL,
+#        comment TEXT,
+#        header_from CHAR(255) DEFAULT NULL,
+#        dkim_domain CHAR(255) DEFAULT NULL,
+#        dkim_result CHAR(11) DEFAULT NULL,
+#        dkim_hresult CHAR(255) DEFAULT NULL,
+#        spf_domain CHAR(255) DEFAULT NULL,
+#        spf_result CHAR(11) DEFAULT NULL,
+#        metadata_fk UNSIGNED INTEGER NOT NULL,
+#        published_fk UNSIGNED INTEGER NOT NULL,
+#        FOREIGN KEY(metadata_fk) REFERENCES report_metadata(id),
+#        FOREIGN KEY(published_fk) REFERENCES policy_published(id)
 }
 
 sub addReport($)
@@ -131,13 +215,13 @@ sub addReport($)
         }
     }
 
-    my %policy = %{ @{ $xmlref->{'policy_published'} }[0] };
     my %report = %{ @{ $xmlref->{'report_metadata'} }[0] };
+    my %policy = %{ @{ $xmlref->{'policy_published'} }[0] };
     my %record = %{ @{ $xmlref->{'record'} }[0] };
 
-    my $policyID = _addPolicyRecord($dbh, %policy);
-    my $reportID = _addReportRecord($dbh, %report);
-    _addRecordRecord($dbh, $policyID, $reportID, %record);
+    my $reportID = addReportRecord($dbh, %report);
+    my $policyID = addPolicyRecord($dbh, %policy);
+    my $recordID = addRecordRecord($dbh, $policyID, $reportID, %record);
 
     closeDBH($dbh);
 }
@@ -146,7 +230,12 @@ sub addReport($)
 # BEGIN
 #
 
-getopts('cf:', \%opts);
+getopts('cdf:', \%opts);
+
+if(defined($opts{'d'})) {
+    $DEBUG = 1;
+}
+
 if(defined($opts{'f'})) {
     if($opts{'f'} =~ m/^(.*\.xml)$/) {
         my $xml = parseXML($1);
