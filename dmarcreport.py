@@ -137,6 +137,7 @@ class XMLParser(xml.sax.ContentHandler):
     ''' Class that parses an XML file passed to it. '''
 
     def __init__(self, filename):
+        xml.sax.ContentHandler.__init__(self)
         self.filename = filename
         self.policypublished = {'domain': None, 'aspf': None, 'adkim': None,
                 'p': None, 'pct': None}
@@ -149,6 +150,7 @@ class XMLParser(xml.sax.ContentHandler):
 
         self.currentdata = None
         self.priordata = None
+        self.attributes = None
 
         # We create an XML parser.
         self.parser = xml.sax.make_parser()
@@ -158,6 +160,7 @@ class XMLParser(xml.sax.ContentHandler):
 
     def startElement(self, tag, attributes):
         self.currentdata = tag
+        self.attributes = attributes
 
         # Feedback.
         if tag == 'feedback':
@@ -168,7 +171,7 @@ class XMLParser(xml.sax.ContentHandler):
             print '==========================================================='
             print 'Parsing records.'
             print '==========================================================='
-            self.priordata =  None
+            self.priordata = None
         elif tag == 'identifiers' and self.priordata is None:
             print 'Identifiers:'
             self.priordata = 'record'
@@ -415,9 +418,9 @@ class XMLParser(xml.sax.ContentHandler):
         else:
             print '***********************************************************'
             print 'Something went wrong.'
-            print 'Tag: {0}'.format(tag)
             print 'Current: {0}'.format(self.currentdata)
             print 'Prior: {0}'.format(self.priordata)
+            print 'Content: {0}'.format(content)
             print '***********************************************************'
 
 
