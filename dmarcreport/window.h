@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QFont>
 
-enum LEVEL { first=0, firstp=10, second=30, secondp=40, third=60, thirdp=70, none=1 };
+enum LEVEL { first=0, none=1, firstp=10, second=30, secondp=40, third=60, thirdp=70 };
 
 class Window : public QWidget
 {

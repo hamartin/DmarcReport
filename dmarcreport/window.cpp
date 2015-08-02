@@ -130,6 +130,7 @@ QLabel *Window::createLabel(const QString &text, const LEVEL &level)
         case secondp: size =  9; bold = false; break;
         case third:   size =  9; bold = true;  break;
         case thirdp:  size =  9; bold = false; break;
+        case none:    size =  9; bold = false; break;   // It shouldn't be possible for the method to get here when none is specified.
     }
 
     font.setBold(bold);
