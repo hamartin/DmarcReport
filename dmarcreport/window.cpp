@@ -79,6 +79,36 @@ Window::Window(QWidget *parent) :
     this->setLayout(layout);
 }
 
+Window::~Window()
+{
+    delete rmOrgName;
+    delete rmEmail;
+    delete rmExtraContactInfo;
+    delete rmReportID;
+    delete rmDateRangeBegin;
+    delete rmDateRangeEnd;
+
+    delete ppDomain;
+    delete ppAdkim;
+    delete ppAspf;
+    delete ppP;
+    delete ppSp;
+    delete ppPct;
+
+    delete reSourceIP;
+    delete reCount;
+    delete reDisposition;
+    delete reDKIM;
+    delete reSPF;
+    delete reHeaderFrom;
+    delete reARDKIMDomain;
+    delete reARDKIMResult;
+    delete reARSPFDomain;
+    delete reARSPFResult;
+
+    delete layout;
+}
+
 void Window::createDataLabels()
 {
     this->rmOrgName = createLabel();
@@ -121,8 +151,8 @@ QLabel *Window::createLabel(const QString &text, const LEVEL &level)
         return label;
     QFont font = label->font();
 
-    unsigned int size;
-    bool bold;
+    unsigned int size = 9;
+    bool bold = false;
     switch(level) {
         case first:   size = 16; bold = true;  break;
         case firstp:  size =  9; bold = false; break;

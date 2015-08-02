@@ -16,6 +16,8 @@ DmarcReport::DmarcReport(QWidget *parent) :
     createActions();
     createMenus();
     createLayout();
+
+    connect(this, SIGNAL(fileProcessed()), this, SLOT(setWindowData()));
 }
 
 DmarcReport::~DmarcReport()
@@ -80,4 +82,9 @@ void DmarcReport::openFile()
 
         emit fileProcessed();
     }
+}
+
+void DmarcReport::setWindowData()
+{
+    this->win->rmOrgName->setText(&this->rep->orgName);
 }

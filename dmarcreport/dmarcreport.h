@@ -28,6 +28,7 @@ signals:
 
 private slots:
     void openFile();
+    void setWindowData();
     
 private:
     void createActions();
