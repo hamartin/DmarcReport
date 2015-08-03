@@ -4,16 +4,16 @@ Window::Window(QWidget *parent) :
     QWidget(parent)
 {
     createDataLabels();
-    this->layout = new QVBoxLayout;
+    layout = new QVBoxLayout;
 
     QLabel      *rmLabel                = createLabel("Report metadata", first);
-    QHBoxLayout *rmOrgNameHBox          = createHBox("Org name", firstp, this->rmOrgName);
-    QHBoxLayout *rmEmailHBox            = createHBox("Email", firstp, this->rmEmail);
-    QHBoxLayout *rmExtraContactInfoHBox = createHBox("Extra contact info", firstp, this->rmExtraContactInfo);
-    QHBoxLayout *rmReportIDHBox         = createHBox("Report ID", firstp, this->rmReportID);
+    QHBoxLayout *rmOrgNameHBox          = createHBox("Org name", firstp, rm_OrgName);
+    QHBoxLayout *rmEmailHBox            = createHBox("Email", firstp, rm_Email);
+    QHBoxLayout *rmExtraContactInfoHBox = createHBox("Extra contact info", firstp, rm_ExtraContactInfo);
+    QHBoxLayout *rmReportIDHBox         = createHBox("Report ID", firstp, rm_ReportID);
     QLabel      *rmDateRangeLabel       = createLabel("Date range", second);
-    QHBoxLayout *rmDateRangeBeginHBox   = createHBox("Begin", secondp, this->rmDateRangeBegin);
-    QHBoxLayout *rmDateRangeEndHBox     = createHBox("End", secondp, this->rmDateRangeEnd);
+    QHBoxLayout *rmDateRangeBeginHBox   = createHBox("Begin", secondp, rm_DateRangeBegin);
+    QHBoxLayout *rmDateRangeEndHBox     = createHBox("End", secondp, rm_DateRangeEnd);
 
     layout->addWidget(rmLabel);
     layout->addLayout(rmOrgNameHBox);
@@ -25,12 +25,12 @@ Window::Window(QWidget *parent) :
     layout->addLayout(rmDateRangeEndHBox);
 
     QLabel      *ppLabel  = createLabel("Policy published", first);
-    QHBoxLayout *ppDomain = createHBox("Domain", firstp, this->ppDomain);
-    QHBoxLayout *ppAdkim  = createHBox("adkim", firstp, this->ppAdkim);
-    QHBoxLayout *ppAspf   = createHBox("aspf", firstp, this->ppAspf);
-    QHBoxLayout *ppP      = createHBox("p", firstp, this->ppP);
-    QHBoxLayout *ppSp     = createHBox("sp", firstp, this->ppSp);
-    QHBoxLayout *ppPct    = createHBox("pct", firstp, this->ppPct);
+    QHBoxLayout *ppDomain = createHBox("Domain", firstp, pp_Domain);
+    QHBoxLayout *ppAdkim  = createHBox("adkim", firstp, pp_Adkim);
+    QHBoxLayout *ppAspf   = createHBox("aspf", firstp, pp_Aspf);
+    QHBoxLayout *ppP      = createHBox("p", firstp, pp_P);
+    QHBoxLayout *ppSp     = createHBox("sp", firstp, pp_Sp);
+    QHBoxLayout *ppPct    = createHBox("pct", firstp, pp_Pct);
 
     layout->addWidget(ppLabel);
     layout->addLayout(ppDomain);
@@ -42,21 +42,21 @@ Window::Window(QWidget *parent) :
 
     QLabel      *rLabel                   = createLabel("Record", first);
     QLabel      *rRowLabel                = createLabel("Row", second);
-    QHBoxLayout *rRowSourceIP             = createHBox("Source IP", secondp, this->reSourceIP);
-    QHBoxLayout *rRowCount                = createHBox("Count", secondp, this->reCount);
+    QHBoxLayout *rRowSourceIP             = createHBox("Source IP", secondp, re_SourceIP);
+    QHBoxLayout *rRowCount                = createHBox("Count", secondp, re_Count);
     QLabel      *rRowPolicyEvaluatedLabel = createLabel("Policy evaluated", third);
-    QHBoxLayout *rRowPEDisposition        = createHBox("Disposition", thirdp, this->reDisposition);
-    QHBoxLayout *rRowPEDKIM               = createHBox("DKIM", thirdp, this->reDKIM);
-    QHBoxLayout *rRowPESPF                = createHBox("SPF", thirdp, this->reSPF);
+    QHBoxLayout *rRowPEDisposition        = createHBox("Disposition", thirdp, re_Disposition);
+    QHBoxLayout *rRowPEDKIM               = createHBox("DKIM", thirdp, re_DKIM);
+    QHBoxLayout *rRowPESPF                = createHBox("SPF", thirdp, re_SPF);
     QLabel      *rIdentifiersLabel        = createLabel("Identifiers", second);
-    QHBoxLayout *rIHeaderFrom             = createHBox("Header from", secondp, this->reHeaderFrom);
+    QHBoxLayout *rIHeaderFrom             = createHBox("Header from", secondp, re_HeaderFrom);
     QLabel      *rAuthResultsLabel        = createLabel("Auth results", second);
     QLabel      *rARDKIMLabel             = createLabel("DKIM", third);
-    QHBoxLayout *rARDKIMDomain            = createHBox("Domain", thirdp, this->reARDKIMDomain);
-    QHBoxLayout *rARDKIMResult            = createHBox("Result", thirdp, this->reARDKIMResult);
+    QHBoxLayout *rARDKIMDomain            = createHBox("Domain", thirdp, re_ARDKIMDomain);
+    QHBoxLayout *rARDKIMResult            = createHBox("Result", thirdp, re_ARDKIMResult);
     QLabel      *rARSPFLabel              = createLabel("SPF", third);
-    QHBoxLayout *rARSPFDomain             = createHBox("Domain", thirdp, this->reARSPFDomain);
-    QHBoxLayout *rARSPFResult             = createHBox("Result", thirdp, this->reARSPFResult);
+    QHBoxLayout *rARSPFDomain             = createHBox("Domain", thirdp, re_ARSPFDomain);
+    QHBoxLayout *rARSPFResult             = createHBox("Result", thirdp, re_ARSPFResult);
 
     layout->addWidget(rLabel);
     layout->addWidget(rRowLabel);
@@ -76,71 +76,65 @@ Window::Window(QWidget *parent) :
     layout->addLayout(rARSPFDomain);
     layout->addLayout(rARSPFResult);
 
-    this->setLayout(layout);
+    setLayout(layout);
 }
 
 Window::~Window()
 {
-    delete rmOrgName;
-    delete rmEmail;
-    delete rmExtraContactInfo;
-    delete rmReportID;
-    delete rmDateRangeBegin;
-    delete rmDateRangeEnd;
+    delete rm_OrgName;
+    delete rm_Email;
+    delete rm_ExtraContactInfo;
+    delete rm_ReportID;
+    delete rm_DateRangeBegin;
+    delete rm_DateRangeEnd;
 
-    delete ppDomain;
-    delete ppAdkim;
-    delete ppAspf;
-    delete ppP;
-    delete ppSp;
-    delete ppPct;
+    delete pp_Domain;
+    delete pp_Adkim;
+    delete pp_Aspf;
+    delete pp_P;
+    delete pp_Sp;
+    delete pp_Pct;
 
-    delete reSourceIP;
-    delete reCount;
-    delete reDisposition;
-    delete reDKIM;
-    delete reSPF;
-    delete reHeaderFrom;
-    delete reARDKIMDomain;
-    delete reARDKIMResult;
-    delete reARSPFDomain;
-    delete reARSPFResult;
+    delete re_SourceIP;
+    delete re_Count;
+    delete re_Disposition;
+    delete re_DKIM;
+    delete re_SPF;
+    delete re_HeaderFrom;
+    delete re_ARDKIMDomain;
+    delete re_ARDKIMResult;
+    delete re_ARSPFDomain;
+    delete re_ARSPFResult;
 
     delete layout;
 }
 
 void Window::createDataLabels()
 {
-    this->rmOrgName = createLabel();
-    this->rmOrgName->setText("Dette");
-    this->rmEmail = createLabel();
-    this->rmEmail->setText("er");
-    this->rmExtraContactInfo = createLabel();
-    this->rmExtraContactInfo->setText("en");
-    this->rmReportID = createLabel();
-    this->rmReportID->setText("test");
-    this->rmDateRangeBegin = createLabel();
-    this->rmDateRangeBegin->setText("uten");
-    this->rmDateRangeEnd = createLabel();
-    this->rmDateRangeEnd->setText("like.");
+    rm_OrgName = createLabel();
+    rm_Email = createLabel();
+    rm_ExtraContactInfo = createLabel();
+    rm_ReportID = createLabel();
+    rm_DateRangeBegin = createLabel();
+    rm_DateRangeEnd = createLabel();
 
-    this->ppDomain = createLabel();
-    this->ppAdkim = createLabel();
-    this->ppAspf = createLabel();
-    this->ppP = createLabel();
-    this->ppSp = createLabel();
-    this->ppPct = createLabel();
+    pp_Domain = createLabel();
+    pp_Adkim = createLabel();
+    pp_Aspf = createLabel();
+    pp_P = createLabel();
+    pp_Sp = createLabel();
+    pp_Pct = createLabel();
 
-    this->reSourceIP = createLabel();
-    this->reCount = createLabel();
-    this->reDisposition = createLabel();
-    this->reDKIM = createLabel();
-    this->reSPF = createLabel();
-    this->reHeaderFrom = createLabel();
-    this->reARDKIMDomain = createLabel();
-    this->reARDKIMResult = createLabel();
-    this->reARSPFDomain = createLabel();
-    this->reARSPFResult = createLabel();
+    re_SourceIP = createLabel();
+    re_Count = createLabel();
+    re_Disposition = createLabel();
+    re_DKIM = createLabel();
+    re_SPF = createLabel();
+    re_HeaderFrom = createLabel();
+    re_ARDKIMDomain = createLabel();
+    re_ARDKIMResult = createLabel();
+    re_ARSPFDomain = createLabel();
+    re_ARSPFResult = createLabel();
 }
 
 QLabel *Window::createLabel(const QString &text, const LEVEL &level)
