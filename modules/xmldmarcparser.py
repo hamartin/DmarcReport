@@ -1,5 +1,6 @@
 ''' Xml parser for the dmarcparser. '''
 
+import xml.etree.ElementTree as et
 import xmldmarcparserexceptions as xmle
 
 class XmlDmarcParser:
@@ -26,7 +27,6 @@ class XmlDmarcParser:
         ''' Closes an open XML file. '''
         if not self._file:
             raise xmle.XmlDmarcParserFileException("No file is open.")
-
         self._file.close()
 
     def open(self):
@@ -49,3 +49,9 @@ class XmlDmarcParser:
             self.close()
 
         self._filename = filename
+
+    def parsexml(self):
+        ''' Parses the loaded xml file. '''
+        if not self._file:
+            raise xmle.XmlDmarcParserFileException('No file loaded.')
+        return et.parse(self._file)
