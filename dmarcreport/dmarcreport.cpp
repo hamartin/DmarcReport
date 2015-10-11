@@ -14,7 +14,7 @@ DmarcReport::DmarcReport(QWidget *parent) :
     createMenus();
     createLayout();
 
-    //connect(this, SIGNAL(fileProcessed()), this, SLOT(setWindowData()));
+    connect(this, SIGNAL(fileProcessed()), this, SLOT(setWindowData()));
 }
 
 DmarcReport::~DmarcReport()
@@ -73,10 +73,11 @@ void DmarcReport::openFile()
         xml = new XmlDmarcParser(fp);
         xml->read();
 
-        rec = xml->rec;
-        rep = xml->rep;
-        pol = xml->pol;
-
         emit fileProcessed();
     }
+}
+
+void DmarcReport::setWindowData()
+{
+    win->rm_Email->setText(xml->rep->email);
 }

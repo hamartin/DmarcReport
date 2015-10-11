@@ -28,6 +28,7 @@ signals:
 
 private slots:
     void openFile();
+    void setWindowData();
     
 private:
     void createActions();
@@ -44,10 +45,6 @@ private:
     XmlDmarcParser *xml;
 
     Window *win;        // setCentralWidget passes owner too, meaning we don't have to delete it.
-
-    struct XmlDmarcParser::policyPublished_t *pol;
-    struct XmlDmarcParser::record_t *rec;
-    struct XmlDmarcParser::reportMetaData_t *rep;
 };
 
 #endif // DMARCREPORT_H
