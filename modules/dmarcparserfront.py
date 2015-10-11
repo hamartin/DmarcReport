@@ -58,6 +58,35 @@ class DmarcParserFront(tk.Frame):
         self._pctlabel = self._createlabel('PCT')
         self._pcttext = None
 
+        # Record
+        self._rowlabel = self._createlabel('Row')
+        self._sourceiplabel = self._createlabel('Source IP')
+        self._sourceiptext = None
+        self._countlabel = self._createlabel('Count')
+        self._counttext = None
+        self._policyevaluatedlabel = self._createlabel('Policy Evaluated')
+        self._dispositionlabel = self._createlabel('Disposition')
+        self._dispositiontext = None
+        self._dkimlabel = self._createlabel('DKIM')
+        self._dkimtext = None
+        self._spflabel = self._createlabel('SPF')
+        self._spftext = None
+        self._identifierslabel = self._createlabel('Identifiers')
+        self._headerfromlabel = self._createlabel('Header From')
+        self._headerfromtext = None
+        self._authresultslabel = self._createlabel('Auth Results')
+        self._spflabel2 = self._createlabel('SPF')
+        self._spftext2 = None
+        self._domainlabel2 = self._createlabel('Domain')
+        self._domaintext2 = None
+        self._resultlabel = self._createlabel('Result')
+        self._resulttext = None
+        self._dkimlabel2 = self._createlabel('DKIM')
+        self._domainlabel3 = self._createlabel('Domain')
+        self._domaintext3 = None
+        self._resultlabel2 = self._createlabel('Result')
+        self._resulttext2 = None
+
         self._showbuttons()
         self._showmenu()
 
@@ -76,8 +105,8 @@ class DmarcParserFront(tk.Frame):
 
     def _showbuttons(self):
         ''' Updates the buttons that the application need. '''
-        self._quitbutton.grid(row=0, column=2)
-        self._openbutton.grid(row=0, column=4)
+        self._quitbutton.grid(row=0, column=0)
+        self._openbutton.grid(row=0, column=1)
 
     def _createlabel(self, text):
         ''' Returns a label with text and self as root/master. '''
@@ -119,7 +148,7 @@ class DmarcParserFront(tk.Frame):
             elif child.tag == 'policy_published':
                 self._parsepolicypublished(child)
             elif child.tag == 'record':
-                self._recordlabel.grid(row=2, column=4)
+                self._parserecord(child)
             else:
                 raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
                                                                     child.tag))
@@ -195,3 +224,144 @@ class DmarcParserFront(tk.Frame):
             else:
                 raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
                                                                     child.tag))
+
+    def _parserecord(self, root):
+        ''' Parse the root of the record child. '''
+        if root.tag != 'record':
+            raise xmle.XmlDmarcParserException(
+                            "Tag is not record: {0}".format(root.tag))
+
+        self._recordlabel.grid(row=2, column=4)
+        for child in root:
+            if child.tag == 'row':
+                self._parserow(child)
+            elif child.tag == 'identifiers':
+                self._parseidentifiers(child)
+            elif child.tag == 'auth_results':
+                self._parseauthresults(child)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parserow(self, root):
+        ''' Parse the root of the row child. '''
+        if root.tag != 'row':
+            raise xmle.XmlDmarcParserException(
+                                        "Tag is not row: {0}".format(root.tag))
+
+        self._rowlabel.grid(row=4, column=4)
+        for child in root:
+            if child.tag == 'source_ip':
+                self._sourceiplabel.grid(row=5, column=4)
+                self._sourceiptext = self._createlabel(child.text)
+                self._sourceiptext.grid(row=5, column=5)
+            elif child.tag == 'count':
+                self._countlabel.grid(row=6, column=4)
+                self._counttext = self._createlabel(child.text)
+                self._counttext.grid(row=6, column=5)
+            elif child.tag == 'policy_evaluated':
+                self._parsepolicyevaluated(child)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parsepolicyevaluated(self, root):
+        ''' Parse the root of the policy evaluated child. '''
+        if root.tag != 'policy_evaluated':
+            raise xmle.XmlDmarcParserException(
+                        "Tag is not policy_evaluated: {0}".format(root.tag))
+
+        self._policyevaluatedlabel.grid(row=7, column=4)
+        for child in root:
+            if child.tag == 'disposition':
+                self._dispositionlabel.grid(row=8, column=4)
+                self._dispositiontext = self._createlabel(child.text)
+                self._dispositiontext.grid(row=8, column=5)
+            elif child.tag == 'dkim':
+                self._dkimlabel.grid(row=9, column=4)
+                self._dkimtext = self._createlabel(child.text)
+                self._dkimtext.grid(row=9, column=5)
+            elif child.tag == 'spf':
+                self._spflabel.grid(row=10, column=4)
+                self._spftext = self._createlabel(child.text)
+                self._spftext.grid(row=10, column=5)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parseidentifiers(self, root):
+        ''' Parse the root of the identifiers child. '''
+        if root.tag != 'identifiers':
+            raise xmle.XmlDmarcParserException(
+                                "Tag is not identifiers: {0}".format(root.tag))
+
+        self._identifierslabel.grid(row=11, column=4)
+        for child in root:
+            if child.tag == 'header_from':
+                self._headerfromlabel.grid(row=12, column=4)
+                self._headerfromtext = self._createlabel(child.text)
+                self._headerfromtext.grid(row=12, column=5)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parseauthresults(self, root):
+        ''' Parse the root of the auth results child. '''
+        if root.tag != 'auth_results':
+            raise xmle.XmlDmarcParserException(
+                            "Tag is not auth_results: {0}".format(root.tag))
+
+        self._authresultslabel.grid(row=13, column=4)
+        for child in root:
+            if child.tag == 'spf':
+                self._parsespf(child)
+            elif child.tag == 'dkim':
+                self._parsedkim(child)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parsespf(self, root):
+        ''' Parse the root of the spf child. '''
+        if root.tag != 'spf':
+            raise xmle.XmlDmarcParserException(
+                                    "Tag is not spf: {0}".format(root.tag))
+
+        self._spflabel2.grid(row=14, column=4)
+        for child in root:
+            if child.tag == 'domain':
+                self._domainlabel2.grid(row=15, column=4)
+                self._domaintext2 = self._createlabel(child.text)
+                self._domaintext2.grid(row=15, column=5)
+            elif child.tag == 'result':
+                self._resultlabel.grid(row=16, column=4)
+                self._resulttext = self._createlabel(child.text)
+                self._resulttext.grid(row=16, column=5)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+    def _parsedkim(self, root):
+        ''' Parse the root of the dkim child. '''
+        if root.tag != 'dkim':
+            raise xmle.XmlDmarcParserException(
+                                    "Tag is not dkim: {0}".format(root.tag))
+
+        self._dkimlabel2.grid(row=17, column=4)
+        for child in root:
+            if child.tag == 'domain':
+                self._domainlabel3.grid(row=18, column=4)
+                self._domaintext3 = self._createlabel(child.text)
+                self._domaintext3.grid(row=18, column=5)
+            elif child.tag == 'result':
+                self._resultlabel2.grid(row=19, column=4)
+                self._resulttext2 = self._createlabel(child.text)
+                self._resulttext2.grid(row=19, column=5)
+            else:
+                raise xmle.XmlDmarcParserException("Unknown tag: {0}".format(
+                                                                    child.tag))
+
+
+
+
+
