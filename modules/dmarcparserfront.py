@@ -68,6 +68,8 @@ class DmarcParserFront(tk.Frame):
 
     def _openfile(self):
         ''' Opens a file dialog and sets the file for the XML parser. '''
+        self.destroy()
+        self.__init__()
         filename = tfd.askopenfilename(**self._fileopts)
         self._xml.setfilename(filename)
         self._xml.open()
