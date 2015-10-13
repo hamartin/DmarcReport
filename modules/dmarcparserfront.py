@@ -6,6 +6,7 @@ import tkFileDialog as tfd
 import xmldmarcparser as xml
 import xmldmarcparserexceptions as xmle
 
+
 class DmarcParserFront(tk.Frame):
 
     ''' Frontend graphics for the dmarcparser. '''
@@ -116,6 +117,7 @@ def getdic(root, dic, cla):
 
     return dic
 
+
 def showlabels(labels, row, column):
     ''' Grids the labels. '''
 
@@ -129,27 +131,28 @@ def showlabels(labels, row, column):
         elif key == 'report_metadata':
             column = 0
             row = 3
-            row = showlabels(value, row+1, column)
+            row = showlabels(value, row + 1, column)
         elif key == 'policy_published':
             column = 2
             row = 3
-            row = showlabels(value, row+1, column)
+            row = showlabels(value, row + 1, column)
         elif key == 'record':
             column = 4
             row = 3
-            row = showlabels(value, row+1, column)
+            row = showlabels(value, row + 1, column)
         else:
             try:
                 value[0].grid(row=row, column=column, sticky=tk.W,
                                                             padx=(100, 10))
-                value[1].grid(row=row, column=column+1, sticky=tk.W,
+                value[1].grid(row=row, column=column + 1, sticky=tk.W,
                                                             padx=(0, 30))
             except KeyError:
-                row = showlabels(value, row+1, column)
+                row = showlabels(value, row + 1, column)
             else:
                 row += 1
 
     return row
+
 
 def unixtimestamptodate(uts):
     ''' Converts unix time stamp to date. '''

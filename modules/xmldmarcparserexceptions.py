@@ -1,5 +1,6 @@
 ''' Module to handle exceptions for the XmlDmarcParser. '''
 
+
 class XmlDmarcParserException(Exception):
     ''' Generic XmlDmarcParser exception. '''
 
@@ -12,6 +13,7 @@ class XmlDmarcParserException(Exception):
 
     def __repr__(self):
         return repr("XmlDmarcParserException: {0}".format(self.message))
+
 
 class XmlDmarcParserFileException(XmlDmarcParserException):
     ''' XmlDmarcParser exception to handle file problems. '''

@@ -3,6 +3,7 @@
 import xml.etree.ElementTree as et
 import xmldmarcparserexceptions as xmle
 
+
 class XmlDmarcParser:
 
     ''' Class that will parse DMARC XML files. '''
@@ -36,7 +37,7 @@ class XmlDmarcParser:
 
         if self._file:
             self._file.close()
-            
+
         try:
             self._file = open(self._filename, 'r')
         except IOError, err:
