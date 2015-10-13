@@ -16,7 +16,10 @@ class DmarcParserFront(tk.Frame):
         self.master.title('DMARC Parser')
 
         self._xml = xml.XmlDmarcParser()
-        self._fileopts = None
+        self._fileopts = {'defaultextension': '.xml',
+                          'filetypes': [('XML files', '.xml'),
+                                        ('ZIP files', '.zip'),
+                                        ('All files', '.*')]}
 
         # Widgets
         self._menubar = tk.Menu(self.master)
@@ -24,7 +27,6 @@ class DmarcParserFront(tk.Frame):
         self._aboutmenu = tk.Menu(self._menubar, tearoff=0)
         self._quitbutton = tk.Button(self, text='Quit', command=self.quit)
         self._openbutton = tk.Button(self, text='Open', command=self._openfile)
-
         self._labels = {}
 
         self._showmenu()
@@ -65,56 +67,18 @@ class DmarcParserFront(tk.Frame):
 
     def _openfile(self):
         ''' Opens a file dialog and sets the file for the XML parser. '''
-        self._fileopts = opts = {}
-        opts['defaultextension'] = '.xml'
-        opts['filetypes'] = [('all files', '.*'), ('XML files', '.xml')]
         filename = tfd.askopenfilename(**self._fileopts)
         self._xml.setfilename(filename)
         self._xml.open()
         tree = self._xml.parsexml()
         root = tree.getroot()
-        self._labels = self._getdic(root, {})
-        self._showlabels(self._labels, 2, 0)
+        self._labels = getdic(root, {}, self._createlabel)
+        showlabels(self._labels, 2, 0)
 
     def _showbuttons(self):
         ''' Updates the buttons that the application need. '''
         self._quitbutton.grid(row=0, column=0)
         self._openbutton.grid(row=0, column=1)
-
-    def _showlabels(self, labels, row, column):
-        ''' Grids the labels. '''
-
-        if 'name' in labels:
-            labels['name'][0].grid(row=row, column=column, sticky=tk.W)
-            row += 1
-
-        for key, value in labels.iteritems():
-            if key == 'name':
-                continue
-            elif key == 'report_metadata':
-                column = 0
-                row = 3
-                row = self._showlabels(value, row+1, column)
-            elif key == 'policy_published':
-                column = 2
-                row = 3
-                row = self._showlabels(value, row+1, column)
-            elif key == 'record':
-                column = 4
-                row = 3
-                row = self._showlabels(value, row+1, column)
-            else:
-                try:
-                    value[0].grid(row=row, column=column, sticky=tk.W,
-                                                                padx=(100, 10))
-                    value[1].grid(row=row, column=column+1, sticky=tk.W,
-                                                                padx=(0, 30))
-                except KeyError:
-                    row = self._showlabels(value, row+1, column)
-                else:
-                    row += 1
-
-        return row
 
     def _showmenu(self):
         ''' Updates the file menu for the application. '''
@@ -128,29 +92,64 @@ class DmarcParserFront(tk.Frame):
 
         self.master.config(menu=self._menubar)
 
-    def _getdic(self, root, dic):
-        ''' Iterates over root and puts the headers and values in dic. '''
-        cla = self._createlabel
 
-        if root.getchildren():
-            dic['name'] = cla(root.tag.title().replace('_', ' '), bold=True)
-            for child in root:
-                dic[child.tag] = self._getdic(child, {})
+def getdic(root, dic, cla):
+    ''' Iterates over root and puts the headers and values in dic. '''
+
+    if root.getchildren():
+        dic['name'] = cla(root.tag.title().replace('_', ' '), bold=True)
+        for child in root:
+            dic[child.tag] = getdic(child, {}, cla)
+    else:
+        if root.tag == 'begin' or root.tag == 'end':
+            dic[root.tag] = cla(root.tag.title().replace('_', ' '),
+                                            unixtimestamptodate(root.text))
+        elif root.text == 'pass':
+            dic[root.tag] = cla(root.tag.title().replace('_', ' '),
+                                                    root.text, bg='green')
+        elif root.text == 'fail':
+            dic[root.tag] = cla(root.tag.title().replace('_', ' '),
+                                                    root.text, bg='red')
         else:
-            if root.tag == 'begin' or root.tag == 'end':
-                dic[root.tag] = cla(root.tag.title().replace('_', ' '),
-                                                unixtimestamptodate(root.text))
-            elif root.text == 'pass':
-                dic[root.tag] = cla(root.tag.title().replace('_', ' '),
-                                                        root.text, bg='green')
-            elif root.text == 'fail':
-                dic[root.tag] = cla(root.tag.title().replace('_', ' '),
-                                                        root.text, bg='red')
-            else:
-                dic[root.tag] = cla(root.tag.title().replace('_', ' '),
-                                                                    root.text)
+            dic[root.tag] = cla(root.tag.title().replace('_', ' '),
+                                                                root.text)
 
-        return dic
+    return dic
+
+def showlabels(labels, row, column):
+    ''' Grids the labels. '''
+
+    if 'name' in labels:
+        labels['name'][0].grid(row=row, column=column, sticky=tk.W)
+        row += 1
+
+    for key, value in labels.iteritems():
+        if key == 'name':
+            continue
+        elif key == 'report_metadata':
+            column = 0
+            row = 3
+            row = showlabels(value, row+1, column)
+        elif key == 'policy_published':
+            column = 2
+            row = 3
+            row = showlabels(value, row+1, column)
+        elif key == 'record':
+            column = 4
+            row = 3
+            row = showlabels(value, row+1, column)
+        else:
+            try:
+                value[0].grid(row=row, column=column, sticky=tk.W,
+                                                            padx=(100, 10))
+                value[1].grid(row=row, column=column+1, sticky=tk.W,
+                                                            padx=(0, 30))
+            except KeyError:
+                row = showlabels(value, row+1, column)
+            else:
+                row += 1
+
+    return row
 
 def unixtimestamptodate(uts):
     ''' Converts unix time stamp to date. '''
