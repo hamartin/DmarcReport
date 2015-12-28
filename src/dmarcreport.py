@@ -132,7 +132,7 @@ class Feedback(ttk.Frame):
                     self.end = ttk.Label(self, text='End: {0}'.format(
                         val['end']['value']))
                 else:
-                    print 'dmarcreport::Feedback::Report::init',
+                    print 'dmarcreport::Feedback::Report::init ',
                     print 'Unknown key {0}'.format(key)
 
             if self.name:
@@ -159,6 +159,48 @@ class Feedback(ttk.Frame):
             self.root = root
             self.master = master
             self.config(padding=10)
+
+            self.name = None
+            self.domain = None
+            self.adkim = None
+            self.aspf = None
+            self.p = None
+            self.pct = None
+
+            for key, val in root.iteritems():
+                if key == 'name':
+                    self.name = ttk.Label(self, text=val)
+                elif key == 'domain':
+                    self.domain = ttk.Label(self, text='Domain: {0}'.format(
+                        val['value']))
+                elif key == 'adkim':
+                    self.adkim = ttk.Label(self, text='Adkim: {0}'.format(
+                        val['value']))
+                elif key == 'aspf':
+                    self.aspf = ttk.Label(self, text='Aspf: {0}'.format(
+                        val['value']))
+                elif key == 'p':
+                    self.p = ttk.Label(self, text='P: {0}'.format(
+                        val['value']))
+                elif key == 'pct':
+                    self.pct = ttk.Label(self, text='Pct: {0}'.format(
+                        val['value']))
+                else:
+                    print 'dmarcreport::Feedback::Policy::init ',
+                    print 'Unknown key {0}'.format(key)
+
+            if self.name:
+                self.name.pack()
+            if self.domain:
+                self.domain.pack()
+            if self.adkim:
+                self.adkim.pack()
+            if self.aspf:
+                self.aspf.pack()
+            if self.p:
+                self.p.pack()
+            if self.pct:
+                self.pct.pack()
 
     class Record(ttk.Frame):
 
@@ -191,7 +233,8 @@ class Feedback(ttk.Frame):
             elif key == 'record':
                 self.record = self.Record(value, self)
             else:
-                print 'dmarcreport::Feedback::init Unknown key {0}'.format(key)
+                print 'dmarcreport::Feedback::init ',
+                print 'Unknown key {0}'.format(key)
 
         if self.name:
             self.name.pack()
