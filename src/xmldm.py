@@ -4,16 +4,59 @@ import re
 import xml.etree.ElementTree as et
 
 
+def getroot(fp):
+    ''' Gets the root of the XML tree. '''
+    tree = et.parse(fp)
+    root = tree.getroot()
+    return root
+
+
+def openxml(filename):
+    ''' Opens a file and returns the result. '''
+    if filename and not re.match(r'^\s+$', filename):
+        try:
+            fp = open(filename, 'r')
+        except IOError:
+            raise
+        else:
+            return fp
+    else:
+        raise Exception('Xml::openxml No filename defined.')
+
+
+def parse(root):
+    ''' Takes the root from an XML tree and parses it. '''
+    dic = {}
+
+    if root is not None and len(root) != 0:
+        dic['name'] = root.tag.title().replace('_', ' ')
+        for child in root:
+            dic[child.tag] = parse(child)
+    else:
+        dic[root.tag] = root.tag.title().replace('_', ' ')
+        dic['value'] = root.text
+
+    return dic
+
+
 def xml(filename):
     ''' Parses an XML file and returns the result. '''
-    if filename and not re.match('^\s+$', filename):
-        fp = open(filename, 'r')
-    else:
-        raise Exception('Xml::xml No filename defined.')
-
+    fp = openxml(filename)
     if fp:
-        ret = et.parse(fp)
+        root = getroot(fp)
         fp.close()
-        return ret
+        return root
     else:
         raise Exception('Xml::xml No file loaded to parse.')
+
+
+def xmldict(filename):
+    ''' Parses an XML file and returns the result as a dictionary. '''
+    fp = openxml(filename)
+    if fp:
+        root = getroot(fp)
+        fp.close()
+        dic = parse(root)
+        return dic
+    else:
+        raise Exception('Xml::xmldict No file loaded to parse.')

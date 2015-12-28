@@ -66,7 +66,8 @@ class DmarcReport(tk.Tk):
                 ('ALL files', '.*')
                 ]
             }
-        self.xml = None
+        self.rootxml = None
+        self.fr_feedback = None
 
         self.fr_begin = ttk.Frame(self)
         self.init()
@@ -83,7 +84,123 @@ class DmarcReport(tk.Tk):
         ''' Opens a file dialog which the user can select a file to open. '''
         filename = tkfd.askopenfilename(**self.fileopts)
         if filename and not re.match('^\d+$', filename):
-            self.xml = xmldm.xml(filename)
+            self.rootxml = xmldm.xmldict(filename)
+            self.fr_feedback = Feedback(self.rootxml, self)
+            self.fr_begin.pack_forget()
+            self.fr_feedback.pack()
+
+
+class Feedback(ttk.Frame):
+
+    ''' A class that handles DMARC XML files and displays them. '''
+
+    class Report(ttk.Frame):
+
+        ''' Handles report metadata content in DMARC XML files. '''
+
+        def __init__(self, root, master=None):
+            ttk.Frame.__init__(self, master)
+            self.root = root
+            self.master = master
+            self.config(padding=10)
+
+            self.name = None
+            self.orgname = None
+            self.email = None
+            self.reportid = None
+            self.daterange = None
+            self.begin = None
+            self.end = None
+
+            for key, val in root.iteritems():
+                if key == 'name':
+                    self.name = ttk.Label(self, text=val)
+                elif key == 'org_name':
+                    self.orgname = ttk.Label(self,
+                            text='Organization name: {0}'.format(val['value']))
+                elif key == 'email':
+                    self.email = ttk.Label(self, text='Email: {0}'.format(
+                        val['value']))
+                elif key == 'report_id':
+                    self.reportid = ttk.Label(self,
+                                              text='Report ID: {0}'.format(
+                                                  val['value']))
+                elif key == 'date_range':
+                    self.daterange = ttk.Label(self, text=val['name'])
+                    self.begin = ttk.Label(self, text='Begin: {0}'.format(
+                        val['begin']['value']))
+                    self.end = ttk.Label(self, text='End: {0}'.format(
+                        val['end']['value']))
+                else:
+                    print 'dmarcreport::Feedback::Report::init',
+                    print 'Unknown key {0}'.format(key)
+
+            if self.name:
+                self.name.pack()
+            if self.orgname:
+                self.orgname.pack()
+            if self.email:
+                self.email.pack()
+            if self.reportid:
+                self.reportid.pack()
+            if self.daterange:
+                self.daterange.pack()
+            if self.begin:
+                self.begin.pack()
+            if self.end:
+                self.end.pack()
+
+    class Policy(ttk.Frame):
+
+        ''' Handles policy published content in DMARC XML files. '''
+
+        def __init__(self, root, master=None):
+            ttk.Frame.__init__(self, master)
+            self.root = root
+            self.master = master
+            self.config(padding=10)
+
+    class Record(ttk.Frame):
+
+        ''' Handles record content in DMARC XML files. '''
+
+        def __init__(self, root, master=None):
+            ttk.Frame.__init__(self, master)
+            self.root = root
+            self.master = master
+            self.config(padding=10)
+
+    def __init__(self, root, master=None):
+        ttk.Frame.__init__(self, master)
+        self.root = root
+        self.master = master
+        self.config(padding=10)
+
+        self.name = None
+        self.report = None
+        self.policy = None
+        self.record = None
+
+        for key, value in root.iteritems():
+            if key == 'name':
+                self.name = ttk.Label(self, text=value)
+            elif key == 'report_metadata':
+                self.report = self.Report(value, self)
+            elif key == 'policy_published':
+                self.policy = self.Policy(value, self)
+            elif key == 'record':
+                self.record = self.Record(value, self)
+            else:
+                print 'dmarcreport::Feedback::init Unknown key {0}'.format(key)
+
+        if self.name:
+            self.name.pack()
+        if self.report:
+            self.report.pack(side=tk.LEFT)
+        if self.policy:
+            self.policy.pack(side=tk.LEFT)
+        if self.record:
+            self.record.pack(side=tk.LEFT)
 
 
 class Menu(tk.Menu):
