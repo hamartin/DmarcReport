@@ -9,6 +9,9 @@ class About(tk.Toplevel):
     ''' An about window which is modal. '''
 
     def __init__(self, master):
+        # TODO: I have been trying to make this window completely modal, but is
+        # unable to do so. Will keep this TODO here to make it possible for me
+        # to fix this at a later time.
         tk.Toplevel.__init__(self, master)
         self.transient(master)
         self.master = master
