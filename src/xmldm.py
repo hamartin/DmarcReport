@@ -12,6 +12,8 @@ def xml(filename):
         raise Exception('Xml::xml No filename defined.')
 
     if fp:
-        return et.parse(fp)
+        ret = et.parse(fp)
+        fp.close()
+        return ret
     else:
         raise Exception('Xml::xml No file loaded to parse.')
