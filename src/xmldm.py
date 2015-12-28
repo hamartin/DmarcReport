@@ -28,13 +28,12 @@ def parse(root):
     ''' Takes the root from an XML tree and parses it. '''
     dic = {}
 
-    if root is not None and len(root) != 0:
-        dic['name'] = root.tag.title().replace('_', ' ')
+    if len(root) == 0:
+        dic[root.tag] = root.text
+    else:
+        dic['name'] = root.tag
         for child in root:
             dic[child.tag] = parse(child)
-    else:
-        dic[root.tag] = root.tag.title().replace('_', ' ')
-        dic['value'] = root.text
 
     return dic
 

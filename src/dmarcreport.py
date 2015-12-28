@@ -31,7 +31,7 @@ class About(tk.Toplevel):
         destroy = self.register(self.killwin)
         self.protocol('WM_DELETE_WINDOW', destroy)
 
-        self.fr_body = ttk.Frame(self, padding=5)
+        self.fr_body = ttk.Frame(self)
         self.fr_body.pack()
         ttk.Label(self.fr_body, text=aboutcontent,
                   padding=(0, 0, 50, 0)).pack()
@@ -57,11 +57,15 @@ class DmarcReport(tk.Tk):
         tk.Tk.__init__(self)
         self.title('DmarcReport')
 
+        self.gui = ttk.Style()
+        self.initgui()
+
         self.menu = Menu(self)
         self.fileopts = {
             'defaultextension': '.xml',
             'filetypes': [
                 ('XML files', '.xml'),
+                # TODO: Make zip files work.
                 # ('ZIP files', '.zip'),
                 ('ALL files', '.*')
                 ]
@@ -80,170 +84,61 @@ class DmarcReport(tk.Tk):
                    padding=10).pack(side=tk.LEFT)
         self.fr_begin.pack()
 
+    def initgui(self):
+        ''' Initializes the styling for widgets. '''
+        self.gui.configure('Header.TFrame', padding=20)
+        self.gui.configure('Header.TLabel', padding=20, relief=tk.FLAT,
+                           font=('courier', 18, 'bold'))
+        self.gui.configure('Header2.TFrame', padding=20, relief=tk.RIDGE)
+        self.gui.configure('Header2.TLabel', padding=20, relief=tk.FLAT,
+                           font=('courier', 13, 'bold'))
+
     def open(self):
         ''' Opens a file dialog which the user can select a file to open. '''
         filename = tkfd.askopenfilename(**self.fileopts)
-        if filename and not re.match('^\d+$', filename):
+        if filename and not re.match(r'^\d+$', filename):
             self.rootxml = xmldm.xmldict(filename)
             self.fr_feedback = Feedback(self.rootxml, self)
             self.fr_begin.pack_forget()
-            self.fr_feedback.pack()
+            self.fr_feedback.pack(expand=True, fill=tk.BOTH)
 
 
 class Feedback(ttk.Frame):
 
-    ''' A class that handles DMARC XML files and displays them. '''
-
-    class Report(ttk.Frame):
-
-        ''' Handles report metadata content in DMARC XML files. '''
-
-        def __init__(self, root, master=None):
-            ttk.Frame.__init__(self, master)
-            self.root = root
-            self.master = master
-            self.config(padding=10)
-
-            self.name = None
-            self.orgname = None
-            self.email = None
-            self.reportid = None
-            self.daterange = None
-            self.begin = None
-            self.end = None
-
-            for key, val in root.iteritems():
-                if key == 'name':
-                    self.name = ttk.Label(self, text=val)
-                elif key == 'org_name':
-                    self.orgname = ttk.Label(self,
-                            text='Organization name: {0}'.format(val['value']))
-                elif key == 'email':
-                    self.email = ttk.Label(self, text='Email: {0}'.format(
-                        val['value']))
-                elif key == 'report_id':
-                    self.reportid = ttk.Label(self,
-                                              text='Report ID: {0}'.format(
-                                                  val['value']))
-                elif key == 'date_range':
-                    self.daterange = ttk.Label(self, text=val['name'])
-                    self.begin = ttk.Label(self, text='Begin: {0}'.format(
-                        val['begin']['value']))
-                    self.end = ttk.Label(self, text='End: {0}'.format(
-                        val['end']['value']))
-                else:
-                    print 'dmarcreport::Feedback::Report::init ',
-                    print 'Unknown key {0}'.format(key)
-
-            if self.name:
-                self.name.pack()
-            if self.orgname:
-                self.orgname.pack()
-            if self.email:
-                self.email.pack()
-            if self.reportid:
-                self.reportid.pack()
-            if self.daterange:
-                self.daterange.pack()
-            if self.begin:
-                self.begin.pack()
-            if self.end:
-                self.end.pack()
-
-    class Policy(ttk.Frame):
-
-        ''' Handles policy published content in DMARC XML files. '''
-
-        def __init__(self, root, master=None):
-            ttk.Frame.__init__(self, master)
-            self.root = root
-            self.master = master
-            self.config(padding=10)
-
-            self.name = None
-            self.domain = None
-            self.adkim = None
-            self.aspf = None
-            self.p = None
-            self.pct = None
-
-            for key, val in root.iteritems():
-                if key == 'name':
-                    self.name = ttk.Label(self, text=val)
-                elif key == 'domain':
-                    self.domain = ttk.Label(self, text='Domain: {0}'.format(
-                        val['value']))
-                elif key == 'adkim':
-                    self.adkim = ttk.Label(self, text='Adkim: {0}'.format(
-                        val['value']))
-                elif key == 'aspf':
-                    self.aspf = ttk.Label(self, text='Aspf: {0}'.format(
-                        val['value']))
-                elif key == 'p':
-                    self.p = ttk.Label(self, text='P: {0}'.format(
-                        val['value']))
-                elif key == 'pct':
-                    self.pct = ttk.Label(self, text='Pct: {0}'.format(
-                        val['value']))
-                else:
-                    print 'dmarcreport::Feedback::Policy::init ',
-                    print 'Unknown key {0}'.format(key)
-
-            if self.name:
-                self.name.pack()
-            if self.domain:
-                self.domain.pack()
-            if self.adkim:
-                self.adkim.pack()
-            if self.aspf:
-                self.aspf.pack()
-            if self.p:
-                self.p.pack()
-            if self.pct:
-                self.pct.pack()
-
-    class Record(ttk.Frame):
-
-        ''' Handles record content in DMARC XML files. '''
-
-        def __init__(self, root, master=None):
-            ttk.Frame.__init__(self, master)
-            self.root = root
-            self.master = master
-            self.config(padding=10)
+    ''' Creates a frame with widgets. '''
 
     def __init__(self, root, master=None):
         ttk.Frame.__init__(self, master)
         self.root = root
         self.master = master
-        self.config(padding=10)
 
-        self.name = None
-        self.report = None
-        self.policy = None
-        self.record = None
+        if not root or 'name' not in root or root['name'] != 'feedback':
+            err = 'dmarcreport::Feedback::init'
+            err = '{0} Expected tag (feedback), got ({1})'.format(err,
+                                                                  root.tag)
+            raise Exception(err)
 
-        for key, value in root.iteritems():
-            if key == 'name':
-                self.name = ttk.Label(self, text=value)
-            elif key == 'report_metadata':
-                self.report = self.Report(value, self)
+        self.fr_header = ttk.Frame(self, style='Header.TFrame')
+        self.fr_header.pack(expand=True, fill=tk.Y, side=tk.TOP)
+        self.la_header = ttk.Label(self.fr_header, text='Feedback',
+                                   style='Header.TLabel')
+        self.la_header.pack(expand=True, fill=tk.X, side=tk.TOP)
+
+        self.fr_report = None
+        self.fr_record = None
+        self.fr_policy = None
+
+        for key, val in root.iteritems():
+            if key == 'report_metadata':
+                self.fr_report = Report(val, self)
             elif key == 'policy_published':
-                self.policy = self.Policy(value, self)
+                self.fr_policy = Policy(val, self)
             elif key == 'record':
-                self.record = self.Record(value, self)
-            else:
-                print 'dmarcreport::Feedback::init ',
-                print 'Unknown key {0}'.format(key)
+                self.fr_record = Record(val, self)
 
-        if self.name:
-            self.name.pack()
-        if self.report:
-            self.report.pack(side=tk.LEFT)
-        if self.policy:
-            self.policy.pack(side=tk.LEFT)
-        if self.record:
-            self.record.pack(side=tk.LEFT)
+        self.fr_report.pack(side=tk.LEFT, expand=True, fill=tk.Y)
+        self.fr_policy.pack(side=tk.LEFT, expand=True, fill=tk.Y)
+        self.fr_record.pack(side=tk.LEFT, expand=True, fill=tk.Y)
 
 
 class Menu(tk.Menu):
@@ -272,3 +167,54 @@ class Menu(tk.Menu):
     def about(self):
         ''' Will display a modal window with information about. '''
         About(self.master)
+
+
+class Policy(ttk.Frame):
+
+    ''' Handles policy pyblished xml content. '''
+
+    def __init__(self, root, master=None):
+        ttk.Frame.__init__(self, master)
+        self.root = root
+        self.master = master
+        self.config(style='Header2.TFrame')
+
+        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        self.fr_body.pack(expand=True, fill=tk.Y)
+        self.la_heading = ttk.Label(self.fr_body, text='Policy Published',
+                                    style='Header2.TLabel')
+        self.la_heading.pack(expand=True, fill=tk.Y)
+
+
+class Record(ttk.Frame):
+
+    ''' Handles policy pyblished xml content. '''
+
+    def __init__(self, root, master=None):
+        ttk.Frame.__init__(self, master)
+        self.root = root
+        self.master = master
+        self.config(style='Header2.TFrame')
+
+        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        self.fr_body.pack(expand=True, fill=tk.Y)
+        self.la_heading = ttk.Label(self.fr_body, text='Record',
+                                    style='Header2.TLabel')
+        self.la_heading.pack(expand=True, fill=tk.Y)
+
+
+class Report(ttk.Frame):
+
+    ''' Handles report metadata xml content. '''
+
+    def __init__(self, root, master=None):
+        ttk.Frame.__init__(self, master)
+        self.root = root
+        self.master = master
+        self.config(style='Header2.TFrame')
+
+        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        self.fr_body.pack(expand=True, fill=tk.Y)
+        self.la_heading = ttk.Label(self.fr_body, text='Report Metadata',
+                                    style='Header2.TLabel')
+        self.la_heading.pack(expand=True, fill=tk.Y)
