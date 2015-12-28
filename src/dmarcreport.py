@@ -6,7 +6,7 @@ import ttk
 
 class About(tk.Toplevel):
 
-    ''' An about window which is modal. '''
+    ''' DmarcParsers modal about window. '''
 
     def __init__(self, master):
         # TODO: I have been trying to make this window completely modal, but is
