@@ -2,8 +2,11 @@
 
 ''' A simple Tkinter graphical user interface for reading DMARC XML files. '''
 
+import re
+import tkFileDialog as tkfd
 import Tkinter as tk
 import ttk
+import src.xmldm as xmldm
 
 
 class About(tk.Toplevel):
@@ -19,24 +22,22 @@ class About(tk.Toplevel):
         self.master = master
         self.title('About DmarcReport')
 
-        self.aboutcontent = '''
+        aboutcontent = '''
             Created by Hans Åge Martinsen
             Email: <hamartin@moshwire.com>
             URL: https://github.com/hamartin/DmarcReport
         '''
 
-        self.destroy = self.register(self.killwin)
-        self.protocol('WM_DELETE_WINDOW', self.destroy)
+        destroy = self.register(self.killwin)
+        self.protocol('WM_DELETE_WINDOW', destroy)
 
         self.fr_body = ttk.Frame(self, padding=5)
-        self.la_about = ttk.Label(self.fr_body, text=self.aboutcontent,
-                                  padding=(0, 0, 50, 0))
+        self.fr_body.pack()
+        ttk.Label(self.fr_body, text=aboutcontent,
+                  padding=(0, 0, 50, 0)).pack()
         self.bu_ok = ttk.Button(self.fr_body, text='OK', command=self.destroy)
         self.bu_ok.focus()
         self.bu_ok.bind('<Return>', self.destroy)
-
-        self.fr_body.pack()
-        self.la_about.pack()
         self.bu_ok.pack()
 
         self.master.wait_window(self)
@@ -57,17 +58,32 @@ class DmarcReport(tk.Tk):
         self.title('DmarcReport')
 
         self.menu = Menu(self)
+        self.fileopts = {
+            'defaultextension': '.xml',
+            'filetypes': [
+                ('XML files', '.xml'),
+                # ('ZIP files', '.zip'),
+                ('ALL files', '.*')
+                ]
+            }
+        self.xml = None
 
         self.fr_begin = ttk.Frame(self)
+        self.init()
+
+    def init(self):
+        ''' Initializes the start screen. '''
+        ttk.Button(self.fr_begin, text='Open', command=self.open,
+                   padding=10).pack(side=tk.LEFT)
+        ttk.Button(self.fr_begin, text='Quit', command=self.quit,
+                   padding=10).pack(side=tk.LEFT)
         self.fr_begin.pack()
-        self.bu_quit = ttk.Button(self, text='Quit', command=self.quit)
-        self.bu_quit.pack()
-        self.bu_open = ttk.Button(self, text='Open', command=self.open)
-        self.bu_open.pack()
 
     def open(self):
-        ''' foo '''
-        print "foo"
+        ''' Opens a file dialog which the user can select a file to open. '''
+        filename = tkfd.askopenfilename(**self.fileopts)
+        if filename and not re.match('^\d+$', filename):
+            self.xml = xmldm.xml(filename)
 
 
 class Menu(tk.Menu):
