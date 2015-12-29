@@ -26,16 +26,13 @@ def openxml(filename):
 
 def parse(root):
     ''' Takes the root from an XML tree and parses it. '''
-    dic = {}
-
     if len(root) == 0:
-        dic[root.tag] = root.text
+        return root.text
     else:
-        dic['name'] = root.tag
+        dic = {}
         for child in root:
             dic[child.tag] = parse(child)
-
-    return dic
+        return dic
 
 
 def xml(filename):

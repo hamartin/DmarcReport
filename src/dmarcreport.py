@@ -9,14 +9,23 @@ import ttk
 import src.xmldm as xmldm
 
 
+def stdframe(key, value, frame):
+    ''' Creates a frame with two labels in it and packs it. '''
+    newframe = ttk.Frame(frame)
+    ttk.Label(newframe, text=key.replace('_', ' ').title(),
+              anchor=tk.W).pack(side=tk.LEFT, fill=tk.X)
+    ttk.Label(newframe, text=value, anchor=tk.E).pack(side=tk.LEFT, fill=tk.X)
+    newframe.pack()
+
+
 class About(tk.Toplevel):
 
     ''' DmarcReports modal about window. '''
 
     def __init__(self, master):
         # TODO: I have been trying to make this window completely modal, but is
-        # unable to do so. Will keep this TODO here to remember me to fix this
-        # at a later time.
+        # unable to do so. Will keep this here to remember me to fix this at a
+        # later time.
         tk.Toplevel.__init__(self, master)
         self.transient(master)
         self.master = master
@@ -70,10 +79,9 @@ class DmarcReport(tk.Tk):
                 ('ALL files', '.*')
                 ]
             }
-        self.rootxml = None
         self.fr_feedback = None
-
         self.fr_begin = ttk.Frame(self)
+
         self.init()
 
     def init(self):
@@ -86,19 +94,30 @@ class DmarcReport(tk.Tk):
 
     def initgui(self):
         ''' Initializes the styling for widgets. '''
-        self.gui.configure('Header.TFrame', padding=20)
-        self.gui.configure('Header.TLabel', padding=20, relief=tk.FLAT,
-                           font=('courier', 18, 'bold'))
-        self.gui.configure('Header2.TFrame', padding=20, relief=tk.RIDGE)
-        self.gui.configure('Header2.TLabel', padding=20, relief=tk.FLAT,
-                           font=('courier', 13, 'bold'))
+        pass
+#        self.gui.configure('Header.TFrame', padding=30)
+#        self.gui.configure('Header.TLabel', padding=30, relief=tk.FLAT,
+#                           font=('courier', 24, 'bold'))
+#        self.gui.configure('Header2.TFrame', padding=20, relief=tk.RIDGE)
+#        self.gui.configure('Header2.TLabel', padding=20, relief=tk.FLAT,
+#                           font=('courier', 20, 'bold'),
+#                           foreground='dark green')
+#        self.gui.configure('Body2.TFrame', padding=10)
+#        self.gui.configure('Body2Sub.TLabel', padding=10, relief=tk.FLAT,
+#                           font=('courier', 16, 'bold'), foreground='green')
+#        self.gui.configure('Body2Sub2.TLabel', padding=5, relief=tk.FLAT,
+#                           font=('courier', 12, 'bold'),
+#                           foreground='indian red')
+#        self.gui.configure('Body2Key.TLabel', padding=10, relief=tk.FLAT,
+#                           font=('courier', 10, 'bold'))
+#        self.gui.configure('Body2Value.TLabel', padding=10, relief=tk.FLAT,
+#                           font=('courier', 10))
 
     def open(self):
         ''' Opens a file dialog which the user can select a file to open. '''
         filename = tkfd.askopenfilename(**self.fileopts)
         if filename and not re.match(r'^\d+$', filename):
-            self.rootxml = xmldm.xmldict(filename)
-            self.fr_feedback = Feedback(self.rootxml, self)
+            self.fr_feedback = Feedback(xmldm.xmldict(filename), self)
             self.fr_begin.pack_forget()
             self.fr_feedback.pack(expand=True, fill=tk.BOTH)
 
@@ -112,33 +131,17 @@ class Feedback(ttk.Frame):
         self.root = root
         self.master = master
 
-        if not root or 'name' not in root or root['name'] != 'feedback':
-            err = 'dmarcreport::Feedback::init'
-            err = '{0} Expected tag (feedback), got ({1})'.format(err,
-                                                                  root.tag)
-            raise Exception(err)
-
-        self.fr_header = ttk.Frame(self, style='Header.TFrame')
-        self.fr_header.pack(expand=True, fill=tk.Y, side=tk.TOP)
-        self.la_header = ttk.Label(self.fr_header, text='Feedback',
-                                   style='Header.TLabel')
-        self.la_header.pack(expand=True, fill=tk.X, side=tk.TOP)
-
-        self.fr_report = None
-        self.fr_record = None
-        self.fr_policy = None
+        ttk.Label(self, text='Feedback', anchor=tk.N).pack(expand=True,
+                                                           fill=tk.X,
+                                                           side=tk.TOP)
 
         for key, val in root.iteritems():
             if key == 'report_metadata':
-                self.fr_report = Report(val, self)
+                Report(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
             elif key == 'policy_published':
-                self.fr_policy = Policy(val, self)
+                Policy(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
             elif key == 'record':
-                self.fr_record = Record(val, self)
-
-        self.fr_report.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-        self.fr_policy.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-        self.fr_record.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+                Record(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
 
 class Menu(tk.Menu):
@@ -177,18 +180,19 @@ class Policy(ttk.Frame):
         ttk.Frame.__init__(self, master)
         self.root = root
         self.master = master
-        self.config(style='Header2.TFrame')
+        # self.config()
 
-        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        ttk.Label(self, text='Policy Published').pack()
+
+        self.fr_body = ttk.Frame(self)
         self.fr_body.pack(expand=True, fill=tk.Y)
-        self.la_heading = ttk.Label(self.fr_body, text='Policy Published',
-                                    style='Header2.TLabel')
-        self.la_heading.pack(expand=True, fill=tk.Y)
 
-        self._getdata(root):
-            ''' Gets the rest of the data in root. '''
-            for key, val in root.iteritems():
-                # TODO: FIX FIX FIX
+        self._getdata(root)
+
+    def _getdata(self, root):
+        ''' Iterates over a dictionary and retrieves information. '''
+        for key, val in root.iteritems():
+            stdframe(key, val, self.fr_body)
 
 
 class Record(ttk.Frame):
@@ -199,13 +203,12 @@ class Record(ttk.Frame):
         ttk.Frame.__init__(self, master)
         self.root = root
         self.master = master
-        self.config(style='Header2.TFrame')
+        # self.config()
 
-        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        ttk.Label(self, text='Record').pack()
+
+        self.fr_body = ttk.Frame(self)
         self.fr_body.pack(expand=True, fill=tk.Y)
-        self.la_heading = ttk.Label(self.fr_body, text='Record',
-                                    style='Header2.TLabel')
-        self.la_heading.pack(expand=True, fill=tk.Y)
 
 
 class Report(ttk.Frame):
@@ -216,10 +219,9 @@ class Report(ttk.Frame):
         ttk.Frame.__init__(self, master)
         self.root = root
         self.master = master
-        self.config(style='Header2.TFrame')
+        # self.config()
 
-        self.fr_body = ttk.Frame(self, style='Header2.TFrame')
+        ttk.Label(self, text='Report').pack()
+
+        self.fr_body = ttk.Frame(self)
         self.fr_body.pack(expand=True, fill=tk.Y)
-        self.la_heading = ttk.Label(self.fr_body, text='Report Metadata',
-                                    style='Header2.TLabel')
-        self.la_heading.pack(expand=True, fill=tk.Y)
