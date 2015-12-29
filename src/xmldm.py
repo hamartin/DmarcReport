@@ -35,17 +35,6 @@ def parse(root):
         return dic
 
 
-def xml(filename):
-    ''' Parses an XML file and returns the result. '''
-    fp = openxml(filename)
-    if fp:
-        root = getroot(fp)
-        fp.close()
-        return root
-    else:
-        raise Exception('Xml::xml No file loaded to parse.')
-
-
 def xmldict(filename):
     ''' Parses an XML file and returns the result as a dictionary. '''
     fp = openxml(filename)
