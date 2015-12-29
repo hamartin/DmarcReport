@@ -10,13 +10,11 @@ import ttk
 import src.xmldm as xmldm
 
 
-def stdframe(key, value, frame):
+def stdframe(key, value, fr_l, fr_r):
     ''' Creates a frame with two labels in it and packs it. '''
-    newframe = ttk.Frame(frame)
-    ttk.Label(newframe, text=key.replace('_', ' ').title(),
-              anchor=tk.W).pack(side=tk.LEFT, fill=tk.X)
-    ttk.Label(newframe, text=value, anchor=tk.E).pack(side=tk.LEFT, fill=tk.X)
-    newframe.pack()
+    ttk.Label(fr_l, text=key.replace('_', ' ').title(),
+              anchor=tk.W).pack()
+    ttk.Label(fr_r, text=value).pack()
 
 
 def unixtimestamptodate(uts):
@@ -100,24 +98,10 @@ class DmarcReport(tk.Tk):
 
     def initgui(self):
         ''' Initializes the styling for widgets. '''
-        pass
-#        self.gui.configure('Header.TFrame', padding=30)
-#        self.gui.configure('Header.TLabel', padding=30, relief=tk.FLAT,
-#                           font=('courier', 24, 'bold'))
-#        self.gui.configure('Header2.TFrame', padding=20, relief=tk.RIDGE)
-#        self.gui.configure('Header2.TLabel', padding=20, relief=tk.FLAT,
-#                           font=('courier', 20, 'bold'),
-#                           foreground='dark green')
-#        self.gui.configure('Body2.TFrame', padding=10)
-#        self.gui.configure('Body2Sub.TLabel', padding=10, relief=tk.FLAT,
-#                           font=('courier', 16, 'bold'), foreground='green')
-#        self.gui.configure('Body2Sub2.TLabel', padding=5, relief=tk.FLAT,
-#                           font=('courier', 12, 'bold'),
-#                           foreground='indian red')
-#        self.gui.configure('Body2Key.TLabel', padding=10, relief=tk.FLAT,
-#                           font=('courier', 10, 'bold'))
-#        self.gui.configure('Body2Value.TLabel', padding=10, relief=tk.FLAT,
-#                           font=('courier', 10))
+        self.gui.configure('H1.TLabel', padding=30,
+                           font=('courier', 30, 'bold'))
+        self.gui.configure('H2.TLabel', padding=24,
+                           font=('courier', 24, 'bold'))
 
     def open(self):
         ''' Opens a file dialog which the user can select a file to open. '''
@@ -137,9 +121,7 @@ class Feedback(ttk.Frame):
         self.root = root
         self.master = master
 
-        ttk.Label(self, text='Feedback', anchor=tk.N).pack(expand=True,
-                                                           fill=tk.X,
-                                                           side=tk.TOP)
+        ttk.Label(self, text='Feedback', style='H1.TLabel').pack()
 
         for key, val in root.iteritems():
             if key == 'report_metadata':
@@ -188,17 +170,19 @@ class Policy(ttk.Frame):
         self.master = master
         # self.config()
 
-        ttk.Label(self, text='Policy Published').pack()
+        ttk.Label(self, text='Policy Published', style='H2.TLabel').pack()
 
-        self.fr_body = ttk.Frame(self)
-        self.fr_body.pack(expand=True, fill=tk.Y)
+        self.fr_left = ttk.Frame(self)
+        self.fr_left.pack(side=tk.LEFT)
+        self.fr_right = ttk.Frame(self)
+        self.fr_right.pack(side=tk.LEFT)
 
         self._getdata(root)
 
     def _getdata(self, root):
         ''' Iterates over a dictionary and retrieves information. '''
         for key, val in root.iteritems():
-            stdframe(key, val, self.fr_body)
+            stdframe(key, val, self.fr_left, self.fr_right)
 
 
 class Record(ttk.Frame):
@@ -211,7 +195,7 @@ class Record(ttk.Frame):
         self.master = master
         # self.config()
 
-        ttk.Label(self, text='Record').pack()
+        ttk.Label(self, text='Record', style='H2.TLabel').pack()
 
         self.fr_body = ttk.Frame(self)
         self.fr_body.pack(expand=True, fill=tk.Y)
@@ -227,10 +211,12 @@ class Report(ttk.Frame):
         self.master = master
         # self.config()
 
-        ttk.Label(self, text='Report Metadata').pack()
+        ttk.Label(self, text='Report Metadata', style='H2.TLabel').pack()
 
-        self.fr_body = ttk.Frame(self)
-        self.fr_body.pack(expand=True, fill=tk.Y)
+        self.fr_left = ttk.Frame(self)
+        self.fr_left.pack(side=tk.LEFT)
+        self.fr_right = ttk.Frame(self)
+        self.fr_right.pack(side=tk.LEFT)
 
         self._getdata(root)
 
@@ -238,9 +224,10 @@ class Report(ttk.Frame):
         ''' Iterates over a dictionary and retrieves information. '''
         for key, val in root.iteritems():
             if key == 'org_name' or key == 'email' or key == 'report_id':
-                stdframe(key, val, self.fr_body)
+                stdframe(key, val, self.fr_left, self.fr_right)
             elif key == 'date_range':
-                ttk.Label(self.fr_body,
+                ttk.Label(self.fr_left,
                           text=key.replace('_', ' ').title()).pack()
                 for k in val:
-                    stdframe(k, unixtimestamptodate(val[k]), self.fr_body)
+                    stdframe(k, unixtimestamptodate(val[k]), self.fr_left,
+                             self.fr_right)
