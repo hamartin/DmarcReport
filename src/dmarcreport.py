@@ -2,6 +2,7 @@
 
 ''' A simple Tkinter graphical user interface for reading DMARC XML files. '''
 
+import datetime
 import re
 import tkFileDialog as tkfd
 import Tkinter as tk
@@ -16,6 +17,11 @@ def stdframe(key, value, frame):
               anchor=tk.W).pack(side=tk.LEFT, fill=tk.X)
     ttk.Label(newframe, text=value, anchor=tk.E).pack(side=tk.LEFT, fill=tk.X)
     newframe.pack()
+
+
+def unixtimestamptodate(uts):
+    ''' Converts Unix time stamp to date. '''
+    return datetime.datetime.fromtimestamp(int(uts)).strftime("%d.%m.%Y")
 
 
 class About(tk.Toplevel):
@@ -221,7 +227,20 @@ class Report(ttk.Frame):
         self.master = master
         # self.config()
 
-        ttk.Label(self, text='Report').pack()
+        ttk.Label(self, text='Report Metadata').pack()
 
         self.fr_body = ttk.Frame(self)
         self.fr_body.pack(expand=True, fill=tk.Y)
+
+        self._getdata(root)
+
+    def _getdata(self, root):
+        ''' Iterates over a dictionary and retrieves information. '''
+        for key, val in root.iteritems():
+            if key == 'org_name' or key == 'email' or key == 'report_id':
+                stdframe(key, val, self.fr_body)
+            elif key == 'date_range':
+                ttk.Label(self.fr_body,
+                          text=key.replace('_', ' ').title()).pack()
+                for k in val:
+                    stdframe(k, unixtimestamptodate(val[k]), self.fr_body)
