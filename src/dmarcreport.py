@@ -136,9 +136,9 @@ class Feedback(ttk.Frame):
             elif key == 'record':
                 self.fr_record = Record(val, self)
 
-        self.fr_report.pack(side=tk.LEFT, expand=True, fill=tk.Y)
-        self.fr_policy.pack(side=tk.LEFT, expand=True, fill=tk.Y)
-        self.fr_record.pack(side=tk.LEFT, expand=True, fill=tk.Y)
+        self.fr_report.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.fr_policy.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.fr_record.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
 
 class Menu(tk.Menu):
@@ -184,6 +184,11 @@ class Policy(ttk.Frame):
         self.la_heading = ttk.Label(self.fr_body, text='Policy Published',
                                     style='Header2.TLabel')
         self.la_heading.pack(expand=True, fill=tk.Y)
+
+        self._getdata(root):
+            ''' Gets the rest of the data in root. '''
+            for key, val in root.iteritems():
+                # TODO: FIX FIX FIX
 
 
 class Record(ttk.Frame):
