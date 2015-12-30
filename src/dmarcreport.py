@@ -6,6 +6,36 @@ import tkFileDialog as tkfd
 import Tkinter as tk
 import ttk
 
+import src.xmldm as xml
+
+# CONSTANTS.
+
+# Record
+REC_SOURCE_IP = 2
+REC_COUNT = 3
+REC_DISPOSITION = 5
+REC_DKIM = 6
+REC_SPF = 7
+REC_HEADER_FROM = 9
+REC_DKIM_DOMAIN = 12
+REC_DKIM_RESULT = 13
+REC_SPF_DOMAIN = 15
+REC_SPF_RESULT = 16
+
+# Policy Evaluated
+POL_DOMAIN = 1
+POL_ADKIM = 2
+POL_ASPF = 3
+POL_P = 4
+POL_PCT = 5
+
+# Report Metadata
+REP_ORG_NAME = 1
+REP_EMAIL = 2
+REP_REPORT_ID = 3
+REP_BEGIN = 5
+REP_END = 6
+
 
 class About(tk.Toplevel):
 
@@ -90,14 +120,15 @@ class DmarcReport(tk.Tk):
     def initstatics(self):
         ''' Initiates static widgets. '''
         # Frames.
-        self.record = rec = ttk.Frame(self)
-        self.record.grid(row=1, column=0, sticky=tk.N)
+        self.fr_record = rec = ttk.Frame(self)
+        self.fr_record.grid(row=1, column=0, sticky=tk.N)
         ttk.Frame(self, width=50).grid(row=1, column=1)
-        self.policy = pol = ttk.Frame(self)
-        self.policy.grid(row=1, column=2, sticky=tk.N)
+        self.fr_policy = pol = ttk.Frame(self)
+        self.fr_policy.grid(row=1, column=2, sticky=tk.N)
         ttk.Frame(self, width=50).grid(row=1, column=3)
-        self.report = rep = ttk.Frame(self)
-        self.report.grid(row=1, column=4, sticky=tk.N)
+        self.fr_report = rep = ttk.Frame(self)
+        self.fr_report.grid(row=1, column=4, sticky=tk.N)
+        ttk.Frame(self, height=20).grid(row=2, column=0, columnspan=6)
 
         # Headers.
         ttk.Label(self, text='Feedback',
@@ -113,73 +144,181 @@ class DmarcReport(tk.Tk):
         ttk.Label(rec, text='Row',
                   style='H3.TLabel').grid(row=1, column=0, sticky=tk.W)
         ttk.Label(rec, text='Source IP',
-                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REC_SOURCE_IP, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='Count',
-                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REC_COUNT, column=0, sticky=tk.W)
         ttk.Label(rec, text='Policy Evaluated',
                   style='L1BOLD.TLabel').grid(row=4, column=0, sticky=tk.W)
         ttk.Label(rec, text='Disposition',
-                  style='L2.TLabel').grid(row=5, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_DISPOSITION, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='DKIM',
-                  style='L2.TLabel').grid(row=6, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_DKIM, column=0, sticky=tk.W)
         ttk.Label(rec, text='SPF',
-                  style='L2.TLabel').grid(row=7, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_SPF, column=0, sticky=tk.W)
         ttk.Label(rec, text='Identifiers',
                   style='H3.TLabel').grid(row=8, column=0, sticky=tk.W)
         ttk.Label(rec, text='Header From',
-                  style='L1.TLabel').grid(row=9, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REC_HEADER_FROM, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='Auth Results',
                   style='H3.TLabel').grid(row=10, column=0, sticky=tk.W)
         ttk.Label(rec, text='DKIM',
                   style='L1BOLD.TLabel').grid(row=11, column=0, sticky=tk.W)
         ttk.Label(rec, text='Domain',
-                  style='L2.TLabel').grid(row=12, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_DKIM_DOMAIN, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='Result',
-                  style='L2.TLabel').grid(row=13, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_DKIM_RESULT, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='SPF',
                   style='L1BOLD.TLabel').grid(row=14, column=0, sticky=tk.W)
         ttk.Label(rec, text='Domain',
-                  style='L2.TLabel').grid(row=15, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_SPF_DOMAIN, column=0,
+                                          sticky=tk.W)
         ttk.Label(rec, text='Result',
-                  style='L2.TLabel').grid(row=16, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REC_SPF_RESULT, column=0,
+                                          sticky=tk.W)
 
         # Policy Published.
         ttk.Label(pol, text='Domain',
-                  style='L1.TLabel').grid(row=1, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=POL_DOMAIN, column=0,
+                                          sticky=tk.W)
         ttk.Label(pol, text='Adkim',
-                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=POL_ADKIM, column=0, sticky=tk.W)
         ttk.Label(pol, text='Aspf',
-                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=POL_ASPF, column=0, sticky=tk.W)
         ttk.Label(pol, text='P',
-                  style='L1.TLabel').grid(row=4, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=POL_P, column=0, sticky=tk.W)
         ttk.Label(pol, text='Pct',
-                  style='L1.TLabel').grid(row=5, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=POL_PCT, column=0, sticky=tk.W)
 
         # Report metadata.
         ttk.Label(rep, text='Org Name',
-                  style='L1.TLabel').grid(row=1, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REP_ORG_NAME, column=0,
+                                          sticky=tk.W)
         ttk.Label(rep, text='Email',
-                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REP_EMAIL, column=0, sticky=tk.W)
         ttk.Label(rep, text='Report ID',
-                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+                  style='L1.TLabel').grid(row=REP_REPORT_ID, column=0,
+                                          sticky=tk.W)
         ttk.Label(rep, text='Date Range',
                   style='L1BOLD.TLabel').grid(row=4, column=0, sticky=tk.W)
         ttk.Label(rep, text='Begin',
-                  style='L2.TLabel').grid(row=5, column=0, sticky=tk.W)
+                  style='L2.TLabel').grid(row=REP_BEGIN, column=0, sticky=tk.W)
         ttk.Label(rep, text='End',
-                  style='L2.TLabel').grid(row=6, column=0, sticky=tk.W)
-
-        # TEST
-        ttk.Label(rec, text='test').grid(row=1, column=1)
-        ttk.Label(pol, text='test').grid(row=1, column=1)
-        ttk.Label(rep, text='test').grid(row=1, column=1)
+                  style='L2.TLabel').grid(row=REP_END, column=0, sticky=tk.W)
 
     def open(self):
         ''' Opens a file dialog which the user can select a file to open. '''
         filename = tkfd.askopenfilename(**self.fileopts)
         if filename:
-            # TODO Do something with the filename.
-            pass
+            self.parsedictionary(xml.xmldict(filename))
+
+    def parsedictionary(self, dic):
+        ''' Iterates over the dictionary and creates labels where they are
+        supposed to be if the method finds a match. '''
+        for key, val in dic.iteritems():
+            if key == 'record':
+                self.parserecord(val)
+            elif key == 'policy_published':
+                self.parsepolicy(val)
+            elif key == 'report_metadata':
+                self.parsereport(val)
+
+    def parsepolicy(self, dic):
+        ''' Parses the policy published part of the xml dictionary. '''
+        for key, val in dic.iteritems():
+            res = None
+
+            if key == 'adkim':
+                res = POL_ADKIM
+            elif key == 'domain':
+                res = POL_DOMAIN
+            elif key == 'aspf':
+                res = POL_ASPF
+            elif key == 'pct':
+                res = POL_PCT
+            elif key == 'p':
+                res = POL_P
+
+            if res:
+                ttk.Label(self.fr_policy, text=val).grid(row=res, column=1)
+
+    def parserecord(self, dic):
+        ''' Parses the record part of the xml dictionary. '''
+        for key, val in dic.iteritems():
+            res = None
+            value = None
+
+            if key == 'identifiers':
+                if 'header_from' in val:
+                    value = val['header_from']
+                    res = REC_HEADER_FROM
+            elif key == 'auth_results':
+                self.parseauthresults(val)
+            elif key == 'row':
+                self.parserow(val)
+
+            if res and value:
+                ttk.Label(self.fr_record, text=value).grid(row=res, column=1)
+            elif res:
+                ttk.Label(self.fr_record, text=val).grid(row=res, column=1)
+
+    def parsereport(self, dic):
+        ''' Parses the report part of the xml dictionary. '''
+        for key, val in dic.iteritems():
+            res = None
+            if key == 'org_name':
+                res = REP_ORG_NAME
+            elif key == 'email':
+                res = REP_EMAIL
+            elif key == 'report_id':
+                res = REP_REPORT_ID
+            elif key == 'date_range':
+                pass
+
+            if res:
+                ttk.Label(self.fr_report, text=val).grid(row=res, column=1)
+
+    def parseauthresults(self, dic):
+        ''' Parses the auth results part of record xml dictionary. '''
+        for key, val in dic.iteritems():
+            if key == 'dkim':
+                ttk.Label(self.fr_record,
+                          text=val['domain']).grid(row=REC_DKIM_DOMAIN,
+                                                   column=1)
+                ttk.Label(self.fr_record,
+                          text=val['result']).grid(row=REC_DKIM_RESULT,
+                                                   column=1)
+            elif key == 'spf':
+                ttk.Label(self.fr_record,
+                          text=val['domain']).grid(row=REC_SPF_DOMAIN,
+                                                   column=1)
+                ttk.Label(self.fr_record,
+                          text=val['result']).grid(row=REC_SPF_RESULT,
+                                                   column=1)
+
+    def parserow(self, dic):
+        ''' Parses the row part of record xml dictionary. '''
+        for key, val in dic.iteritems():
+            res = None
+            if key == 'source_ip':
+                res = REC_SOURCE_IP
+            elif key == 'count':
+                res = REC_COUNT
+            elif key == 'policy_evaluated':
+                ttk.Label(self.fr_record,
+                          text=val['disposition']).grid(row=REC_DISPOSITION,
+                                                        column=1)
+                ttk.Label(self.fr_record,
+                          text=val['dkim']).grid(row=REC_DKIM, column=1)
+                ttk.Label(self.fr_record,
+                          text=val['spf']).grid(row=REC_SPF, column=1)
+
+            if res:
+                ttk.Label(self.fr_record, text=val).grid(row=res, column=1)
 
 
 class Menu(tk.Menu):
