@@ -1,39 +1,24 @@
 # -*- coding: latin-1 -*-
 
-''' A simple Tkinter graphical user interface for reading DMARC XML files. '''
+''' A Tkinter GUI for reading DMARC XML files. '''
 
-import datetime
-import re
 import tkFileDialog as tkfd
 import Tkinter as tk
 import ttk
-import src.xmldm as xmldm
-
-
-def stdframe(key, value, fr_l, fr_r):
-    ''' Creates a frame with two labels in it and packs it. '''
-    ttk.Label(fr_l, text=key.replace('_', ' ').title(),
-              anchor=tk.W).pack()
-    ttk.Label(fr_r, text=value).pack()
-
-
-def unixtimestamptodate(uts):
-    ''' Converts Unix time stamp to date. '''
-    return datetime.datetime.fromtimestamp(int(uts)).strftime("%d.%m.%Y")
 
 
 class About(tk.Toplevel):
 
-    ''' DmarcReports modal about window. '''
+    ''' A class to display information about the developer. '''
 
     def __init__(self, master):
-        # TODO: I have been trying to make this window completely modal, but is
-        # unable to do so. Will keep this here to remember me to fix this at a
-        # later time.
         tk.Toplevel.__init__(self, master)
-        self.transient(master)
         self.master = master
-        self.title('About DmarcReport')
+        self.title('About Dmarc Report')
+
+        self.transient(master)
+        killwrapper = self.register(self.kill)
+        self.protocol('WM_DELETE_WINDOW', killwrapper)
 
         aboutcontent = '''
             Created by Hans Åge Martinsen
@@ -41,193 +26,180 @@ class About(tk.Toplevel):
             URL: https://github.com/hamartin/DmarcReport
         '''
 
-        destroy = self.register(self.killwin)
-        self.protocol('WM_DELETE_WINDOW', destroy)
-
-        self.fr_body = ttk.Frame(self)
-        self.fr_body.pack()
-        ttk.Label(self.fr_body, text=aboutcontent,
+        self.fr_main = ttk.Frame(self)
+        self.fr_main.pack()
+        ttk.Label(self.fr_main, text=aboutcontent,
                   padding=(0, 0, 50, 0)).pack()
-        self.bu_ok = ttk.Button(self.fr_body, text='OK', command=self.destroy)
+        self.bu_ok = ttk.Button(self.fr_main, text='OK', command=killwrapper)
         self.bu_ok.focus()
-        self.bu_ok.bind('<Return>', self.destroy)
+        self.bu_ok.bind('<Return>', killwrapper)
         self.bu_ok.pack()
 
-        self.master.wait_window(self)
+        master.wait_window(self)
 
-    def killwin(self):
-        ''' Will destroy the modal window and return focus to master. '''
+    def kill(self):
+        ''' Destroys the current modal window and returns focus to master. '''
         self.master.focus_set()
         tk.Toplevel.destroy(self)
 
 
 class DmarcReport(tk.Tk):
 
-    ''' A simple Tkinter graphical user interface for reading DMARC XML
-    files. '''
+    ''' A Tkinter GUI for reading DMARC XML files. '''
 
     def __init__(self):
         tk.Tk.__init__(self)
-        self.title('DmarcReport')
-
-        self.gui = ttk.Style()
-        self.initgui()
+        self.title('Dmarc Report')
 
         self.menu = Menu(self)
+        self.gui = ttk.Style()
         self.fileopts = {
             'defaultextension': '.xml',
             'filetypes': [
                 ('XML files', '.xml'),
-                # TODO: Make zip files work.
+                # TODO: Make ZIP files work.
                 # ('ZIP files', '.zip'),
                 ('ALL files', '.*')
-                ]
-            }
-        self.fr_feedback = None
-        self.fr_begin = ttk.Frame(self)
+            ]
+        }
 
-        self.init()
+        self.fr_report = None
+        self.fr_policy = None
+        self.fr_record = None
 
-    def init(self):
-        ''' Initializes the start screen. '''
-        ttk.Button(self.fr_begin, text='Open', command=self.open,
-                   padding=10).pack(side=tk.LEFT)
-        ttk.Button(self.fr_begin, text='Quit', command=self.quit,
-                   padding=10).pack(side=tk.LEFT)
-        self.fr_begin.pack()
+        self.initgui()
+        self.initstatics()
 
     def initgui(self):
-        ''' Initializes the styling for widgets. '''
-        self.gui.configure('H1.TLabel', padding=30,
-                           font=('courier', 30, 'bold'))
-        self.gui.configure('H2.TLabel', padding=24,
-                           font=('courier', 24, 'bold'))
+        ''' Initiates the styling. '''
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(4, weight=1)
+
+        gui = self.gui
+        gui.configure('H1.TLabel', padding=30, font=('courier', 30, 'bold'))
+        gui.configure('H2.TLabel', padding=24, font=('courier', 24, 'bold'))
+        gui.configure('H3.TLabel', padding=4, font=('courier', 18, 'bold'))
+        gui.configure('H4.TLabel', padding=2, font=('courier', 12, 'bold'))
+
+        gui.configure('L1.TLabel', padding=(10, 0, 0, 0), font=('courier', 12))
+        gui.configure('L1BOLD.TLabel', padding=(10, 0, 0, 0),
+                      font=('courier', 12, 'bold'))
+        gui.configure('L2.TLabel', padding=(20, 0, 0, 0), font=('courier', 12))
+
+    def initstatics(self):
+        ''' Initiates static widgets. '''
+        # Frames.
+        self.record = rec = ttk.Frame(self)
+        self.record.grid(row=1, column=0, sticky=tk.N)
+        ttk.Frame(self, width=50).grid(row=1, column=1)
+        self.policy = pol = ttk.Frame(self)
+        self.policy.grid(row=1, column=2, sticky=tk.N)
+        ttk.Frame(self, width=50).grid(row=1, column=3)
+        self.report = rep = ttk.Frame(self)
+        self.report.grid(row=1, column=4, sticky=tk.N)
+
+        # Headers.
+        ttk.Label(self, text='Feedback',
+                  style='H1.TLabel').grid(row=0, column=0, columnspan=6)
+        ttk.Label(rec, text='Record',
+                  style='H2.TLabel').grid(row=0, column=0, columnspan=2)
+        ttk.Label(pol, text='Policy Published',
+                  style='H2.TLabel').grid(row=0, column=0, columnspan=2)
+        ttk.Label(rep, text='Report Metadata',
+                  style='H2.TLabel').grid(row=0, column=0, columnspan=2)
+
+        # Record.
+        ttk.Label(rec, text='Row',
+                  style='H3.TLabel').grid(row=1, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Source IP',
+                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Count',
+                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Policy Evaluated',
+                  style='L1BOLD.TLabel').grid(row=4, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Disposition',
+                  style='L2.TLabel').grid(row=5, column=0, sticky=tk.W)
+        ttk.Label(rec, text='DKIM',
+                  style='L2.TLabel').grid(row=6, column=0, sticky=tk.W)
+        ttk.Label(rec, text='SPF',
+                  style='L2.TLabel').grid(row=7, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Identifiers',
+                  style='H3.TLabel').grid(row=8, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Header From',
+                  style='L1.TLabel').grid(row=9, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Auth Results',
+                  style='H3.TLabel').grid(row=10, column=0, sticky=tk.W)
+        ttk.Label(rec, text='DKIM',
+                  style='L1BOLD.TLabel').grid(row=11, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Domain',
+                  style='L2.TLabel').grid(row=12, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Result',
+                  style='L2.TLabel').grid(row=13, column=0, sticky=tk.W)
+        ttk.Label(rec, text='SPF',
+                  style='L1BOLD.TLabel').grid(row=14, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Domain',
+                  style='L2.TLabel').grid(row=15, column=0, sticky=tk.W)
+        ttk.Label(rec, text='Result',
+                  style='L2.TLabel').grid(row=16, column=0, sticky=tk.W)
+
+        # Policy Published.
+        ttk.Label(pol, text='Domain',
+                  style='L1.TLabel').grid(row=1, column=0, sticky=tk.W)
+        ttk.Label(pol, text='Adkim',
+                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+        ttk.Label(pol, text='Aspf',
+                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+        ttk.Label(pol, text='P',
+                  style='L1.TLabel').grid(row=4, column=0, sticky=tk.W)
+        ttk.Label(pol, text='Pct',
+                  style='L1.TLabel').grid(row=5, column=0, sticky=tk.W)
+
+        # Report metadata.
+        ttk.Label(rep, text='Org Name',
+                  style='L1.TLabel').grid(row=1, column=0, sticky=tk.W)
+        ttk.Label(rep, text='Email',
+                  style='L1.TLabel').grid(row=2, column=0, sticky=tk.W)
+        ttk.Label(rep, text='Report ID',
+                  style='L1.TLabel').grid(row=3, column=0, sticky=tk.W)
+        ttk.Label(rep, text='Date Range',
+                  style='L1BOLD.TLabel').grid(row=4, column=0, sticky=tk.W)
+        ttk.Label(rep, text='Begin',
+                  style='L2.TLabel').grid(row=5, column=0, sticky=tk.W)
+        ttk.Label(rep, text='End',
+                  style='L2.TLabel').grid(row=6, column=0, sticky=tk.W)
+
+        # TEST
+        ttk.Label(rec, text='test').grid(row=1, column=1)
+        ttk.Label(pol, text='test').grid(row=1, column=1)
+        ttk.Label(rep, text='test').grid(row=1, column=1)
 
     def open(self):
         ''' Opens a file dialog which the user can select a file to open. '''
         filename = tkfd.askopenfilename(**self.fileopts)
-        if filename and not re.match(r'^\d+$', filename):
-            self.fr_feedback = Feedback(xmldm.xmldict(filename), self)
-            self.fr_begin.pack_forget()
-            self.fr_feedback.pack(expand=True, fill=tk.BOTH)
-
-
-class Feedback(ttk.Frame):
-
-    ''' Creates a frame with widgets. '''
-
-    def __init__(self, root, master=None):
-        ttk.Frame.__init__(self, master)
-        self.root = root
-        self.master = master
-
-        ttk.Label(self, text='Feedback', style='H1.TLabel').pack()
-
-        for key, val in root.iteritems():
-            if key == 'report_metadata':
-                Report(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-            elif key == 'policy_published':
-                Policy(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-            elif key == 'record':
-                Record(val, self).pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        if filename:
+            # TODO Do something with the filename.
+            pass
 
 
 class Menu(tk.Menu):
 
-    ''' DmarcReports menu bar. '''
+    ''' The menu for this application. '''
 
-    def __init__(self, master=None):
+    def __init__(self, master):
         tk.Menu.__init__(self, master)
         self.master = master
 
         self.me_file = tk.Menu(self, tearoff=0)
-        self.me_about = tk.Menu(self, tearoff=0)
-
-        self.init()
-
-    def init(self):
-        ''' Initializes the menu bar. '''
         self.me_file.add_command(label='Open', command=self.master.open)
         self.me_file.add_separator()
         self.me_file.add_command(label='Quit', command=self.quit)
         self.add_cascade(label='File', menu=self.me_file)
-        self.me_about.add_command(label='About', command=self.about)
+        self.me_about = tk.Menu(self, tearoff=0)
+        self.me_about.add_command(label='About', command=self._about)
         self.add_cascade(label='Help', menu=self.me_about)
         self.master.config(menu=self)
 
-    def about(self):
-        ''' Will display a modal window with information about. '''
+    def _about(self):
+        ''' Will display a modal window with some information. '''
         About(self.master)
-
-
-class Policy(ttk.Frame):
-
-    ''' Handles policy pyblished xml content. '''
-
-    def __init__(self, root, master=None):
-        ttk.Frame.__init__(self, master)
-        self.root = root
-        self.master = master
-        # self.config()
-
-        ttk.Label(self, text='Policy Published', style='H2.TLabel').pack()
-
-        self.fr_left = ttk.Frame(self)
-        self.fr_left.pack(side=tk.LEFT)
-        self.fr_right = ttk.Frame(self)
-        self.fr_right.pack(side=tk.LEFT)
-
-        self._getdata(root)
-
-    def _getdata(self, root):
-        ''' Iterates over a dictionary and retrieves information. '''
-        for key, val in root.iteritems():
-            stdframe(key, val, self.fr_left, self.fr_right)
-
-
-class Record(ttk.Frame):
-
-    ''' Handles policy pyblished xml content. '''
-
-    def __init__(self, root, master=None):
-        ttk.Frame.__init__(self, master)
-        self.root = root
-        self.master = master
-        # self.config()
-
-        ttk.Label(self, text='Record', style='H2.TLabel').pack()
-
-        self.fr_body = ttk.Frame(self)
-        self.fr_body.pack(expand=True, fill=tk.Y)
-
-
-class Report(ttk.Frame):
-
-    ''' Handles report metadata xml content. '''
-
-    def __init__(self, root, master=None):
-        ttk.Frame.__init__(self, master)
-        self.root = root
-        self.master = master
-        # self.config()
-
-        ttk.Label(self, text='Report Metadata', style='H2.TLabel').pack()
-
-        self.fr_left = ttk.Frame(self)
-        self.fr_left.pack(side=tk.LEFT)
-        self.fr_right = ttk.Frame(self)
-        self.fr_right.pack(side=tk.LEFT)
-
-        self._getdata(root)
-
-    def _getdata(self, root):
-        ''' Iterates over a dictionary and retrieves information. '''
-        for key, val in root.iteritems():
-            if key == 'org_name' or key == 'email' or key == 'report_id':
-                stdframe(key, val, self.fr_left, self.fr_right)
-            elif key == 'date_range':
-                ttk.Label(self.fr_left,
-                          text=key.replace('_', ' ').title()).pack()
-                for k in val:
-                    stdframe(k, unixtimestamptodate(val[k]), self.fr_left,
-                             self.fr_right)
