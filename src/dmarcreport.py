@@ -2,6 +2,7 @@
 
 ''' A Tkinter GUI for reading DMARC XML files. '''
 
+import datetime
 import tkFileDialog as tkfd
 import Tkinter as tk
 import ttk
@@ -35,6 +36,11 @@ REP_EMAIL = 2
 REP_REPORT_ID = 3
 REP_BEGIN = 5
 REP_END = 6
+
+
+def unixtimestamptodate(uts):
+    ''' Converts unix time stamp to date. '''
+    return datetime.datetime.fromtimestamp(int(uts)).strftime("%d.%m.%Y")
 
 
 class About(tk.Toplevel):
@@ -277,7 +283,12 @@ class DmarcReport(tk.Tk):
             elif key == 'report_id':
                 res = REP_REPORT_ID
             elif key == 'date_range':
-                pass
+                dummy = ttk.Label(self.fr_report,
+                                  text=unixtimestamptodate(val['begin']))
+                dummy.grid(row=REP_BEGIN, column=1)
+                dummy = ttk.Label(self.fr_report,
+                                  text=unixtimestamptodate(val['end']))
+                dummy.grid(row=REP_END, column=1)
 
             if res:
                 ttk.Label(self.fr_report, text=val).grid(row=res, column=1)
