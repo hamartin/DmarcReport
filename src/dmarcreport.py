@@ -2,6 +2,9 @@
 
 ''' A Tkinter GUI for reading DMARC XML files. '''
 
+# TODO: The code is not made so that one can open more than one xml at a time.
+# The code will then just add labels on top of other labels.
+
 import datetime
 import tkFileDialog as tkfd
 import Tkinter as tk
