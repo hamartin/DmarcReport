@@ -4,9 +4,9 @@ import re
 import xml.etree.ElementTree as et
 
 
-def getroot(fp):
+def getroot(fpo):
     ''' Gets the root of the XML tree. '''
-    tree = et.parse(fp)
+    tree = et.parse(fpo)
     root = tree.getroot()
     return root
 
@@ -14,12 +14,7 @@ def getroot(fp):
 def openxml(filename):
     ''' Opens a file and returns the result. '''
     if filename and not re.match(r'^\s+$', filename):
-        try:
-            fp = open(filename, 'r')
-        except IOError:
-            raise
-        else:
-            return fp
+        return open(filename, 'r')
     else:
         raise Exception('Xml::openxml No filename defined.')
 
@@ -37,10 +32,10 @@ def parse(root):
 
 def xmldict(filename):
     ''' Parses an XML file and returns the result as a dictionary. '''
-    fp = openxml(filename)
-    if fp:
-        root = getroot(fp)
-        fp.close()
+    fpo = openxml(filename)
+    if fpo:
+        root = getroot(fpo)
+        fpo.close()
         dic = parse(root)
         return dic
     else:
