@@ -2,6 +2,7 @@
 
 import re
 import xml.etree.ElementTree as et
+import zipfile
 
 
 def getroot(fpo):
@@ -13,8 +14,18 @@ def getroot(fpo):
 
 def openxml(filename):
     ''' Opens a file and returns the result. '''
-    if filename and not re.match(r'^\s+$', filename):
+    if(filename and not re.match(r'^\s+$', filename)
+       and not zipfile.is_zipfile(filename)):
         return open(filename, 'r')
+    elif(filename and not re.match(r'^\s+$', filename)
+         and zipfile.is_zipfile(filename)):
+        archive = zipfile.ZipFile(filename)
+        if len(archive.infolist()) > 1:
+            err = 'xmldm::openxml More than 1 file stored in zip file.'
+            raise Exception(err)
+        else:
+            zipobj = archive.infolist()[0]
+            return archive.open(zipobj)
     else:
         raise Exception('Xml::openxml No filename defined.')
 

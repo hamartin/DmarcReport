@@ -93,8 +93,7 @@ class DmarcReport(tk.Tk):
             'defaultextension': '.xml',
             'filetypes': [
                 ('XML files', '.xml'),
-                # TODO: Make ZIP files work.
-                # ('ZIP files', '.zip'),
+                ('ZIP files', '.zip'),
                 ('ALL files', '.*')
             ]
         }

@@ -58,3 +58,6 @@ target/
 
 # XML
 *.xml
+
+# ZIP
+*.zip
