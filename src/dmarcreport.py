@@ -229,7 +229,7 @@ class DmarcReport(tk.Tk):
 
             try:
                 self.parsedictionary(xml.xmldict(filename))
-            except Exception, err:
+            except xml.OpenXMLError, err:
                 print err
 
     def parsedictionary(self, dic):
