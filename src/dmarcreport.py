@@ -227,7 +227,10 @@ class DmarcReport(tk.Tk):
                 self.fr_policy.destroy()
             self.initstatics()
 
-            self.parsedictionary(xml.xmldict(filename))
+            try:
+                self.parsedictionary(xml.xmldict(filename))
+            except Exception, err:
+                print err
 
     def parsedictionary(self, dic):
         ''' Iterates over the dictionary and creates labels where they are
