@@ -228,14 +228,17 @@ class DmarcReport(tk.Tk):
             self.initstatics()
 
             try:
-                self.parsedictionary(xml.xmldict(filename))
+                self.parsedictionary(*xml.xmldict(filename))
             except xml.OpenXMLError, err:
                 print err
 
-    def parsedictionary(self, dic):
+    def parsedictionary(self, tag, root):
         ''' Iterates over the dictionary and creates labels where they are
         supposed to be if the method finds a match. '''
-        for key, val in dic.iteritems():
+        if not tag == 'feedback':
+            raise ValueError(
+                "dmarcreport::parsedictionary tag is not feedback.")
+        for key, val in root.iteritems():
             if key == 'record':
                 self.parserecord(val)
             elif key == 'policy_published':

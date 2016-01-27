@@ -43,14 +43,7 @@ def openxml(filename):
 
 
 def parse(root):
-    ''' Takes the root from an XML tree and parses it. '''
-    if len(root) == 0:
-        return root.text
-    else:
-        dic = {}
-        for child in root:
-            dic[child.tag] = parse(child)
-        return dic
+    return root.tag, dict(map(parse, root)) or root.text
 
 
 def xmldict(filename):
