@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+'''A simple Tkinter graphical user interface for reading DMARC XML/ZIP
+files.'''
+
+import src.dmarcreport as dr
+
+
+if __name__ == '__main__':
+
+    WIN = dr.DmarcReport()
+    WIN.mainloop()
