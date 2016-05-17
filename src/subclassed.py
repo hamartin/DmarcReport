@@ -56,16 +56,35 @@ class Menu(tk.Menu):
         self.me_file.add_separator()
         self.me_file.add_command(label='Quit', underline=0,
                                  command=self.quit)
+        self.me_file.bind('<Enter>', self.entered_file)
+        self.me_file.bind('<Leave>', self.left_menu)
         self.add_cascade(label='File', underline=0, menu=self.me_file)
         self.meabout = tk.Menu(self, tearoff=0)
         self.meabout.add_command(label='About', underline=0,
                                  command=self.about)
+        self.meabout.bind('<Enter>', self.entered_about)
+        self.meabout.bind('<Leave>', self.left_menu)
         self.add_cascade(label='Help', underline=0, menu=self.meabout)
         self.root.config(menu=self)
 
     def about(self):
         ''' Will display a modal window with some information. '''
         About(self.root)
+
+    def entered_about(self, event=None):
+        '''Sets a message using parent.'''
+        if event:
+            self.root.set_message('Help')
+
+    def entered_file(self, event=None):
+        '''Sets a message using parent.'''
+        if event:
+            self.root.set_message('File')
+
+    def left_menu(self, event=None):
+        '''Clears the message.'''
+        if event:
+            self.root.clear_message()
 
 
 class MsgLabel(tk.Label):

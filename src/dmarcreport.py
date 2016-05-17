@@ -7,6 +7,9 @@ import Tkinter as tk
 
 import src.config as cnf
 import src.exceptions as excp
+import src.policy as policy
+import src.record as record
+import src.report as report
 import src.subclassed as sc
 
 
@@ -29,19 +32,25 @@ class DmarcReport(tk.Tk):
     def initialize(self):
         '''Initializes the graphical user interface.'''
         # Header.
-        self.menu = sc.Menu(self)
-        self.header = tk.Frame(self)
-        self.header.pack(fill=tk.X, expand=True)
-        self.header_label = tk.Label(self.header, text='Feedback', pady=30,
-                                     padx=30, font=('courier', 30, 'bold'))
-        self.header_label.pack(fill=tk.BOTH, expand=True)
+        sc.Menu(self)
+        header = tk.Frame(self)
+        header.pack(fill=tk.X)
+        header_label = tk.Label(header, text='Feedback', pady=30,
+                                padx=30, font=('courier', 30, 'bold'))
+        header_label.pack(fill=tk.BOTH, expand=True)
 
         # Body.
-        self.body = tk.Frame(self)
-        self.body.pack(fill=tk.BOTH, expand=True)
+        body = tk.Frame(self)
+        body.pack(fill=tk.BOTH, expand=True)
+        self.record = record.Record(body)
+        self.record.pack(fill=tk.Y, expand=True, side=tk.LEFT)
+        self.policy = policy.Policy(body)
+        self.policy.pack(fill=tk.Y, expand=True, side=tk.LEFT)
+        self.report = report.Report(body)
+        self.report.pack(fill=tk.Y, expand=True, side=tk.LEFT)
 
         # Footer.
-        self.separator_line = sc.SepLineFrame(self)
+        sc.SepLineFrame(self)
         self.msg_label = sc.MsgLabel(self)
 
     def set_message(self, msg, seconds=None):
