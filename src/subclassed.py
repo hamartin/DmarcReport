@@ -52,7 +52,7 @@ class Menu(tk.Menu):
 
         self.me_file = tk.Menu(self, tearoff=0)
         self.me_file.add_command(label='Open', underline=0,
-                                 command=self.quit)
+                                 command=self.root.open)
         self.me_file.add_separator()
         self.me_file.add_command(label='Quit', underline=0,
                                  command=self.quit)
@@ -158,3 +158,32 @@ class SepLineFrame(tk.Frame):
 
         self.config(relief=relief, height=height, bg=fbg)
         self.pack(padx=padx, pady=pady, fill=fill)
+
+
+class DmParserFrame(tk.Frame):
+
+    '''A general frame to subclass from when making body frames.'''
+
+    def __init__(self, root, **kwargs):
+        tk.Frame.__init__(self, root, **kwargs)
+        self.root = root
+
+    def repopulate(self, data):
+        '''Repopulates the frame.'''
+        pass
+
+
+class LabelFrame(tk.Frame):
+
+    '''A Frame with two label packed side by side.'''
+
+    def __init__(self, root, header, **kwargs):
+        tk.Frame.__init__(self, root, **kwargs)
+        self.left_label = tk.Label(self, text=header.title())
+        self.left_label.pack(side=tk.LEFT)
+        self.right_label = tk.Label(self, text='')
+        self.right_label.pack(side=tk.LEFT)
+
+    def set_value(self, text):
+        ''' Sets the right_label to text.'''
+        self.right_label.config(text=text)

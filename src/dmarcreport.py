@@ -3,6 +3,7 @@
 '''A simple Tkinter graphical user interface for reading and displaying
 DMARC XML/Zip information.'''
 
+import tkFileDialog as tkfd
 import Tkinter as tk
 
 import src.config as cnf
@@ -24,6 +25,15 @@ class DmarcReport(tk.Tk):
 
         self.initialize()
         self.set_message('Ready…')
+
+        self.fileopts = {
+            'defaultextension': '.xml',
+            'filetypes': [
+                ('XML files', '.xml'),
+                ('ZIP files', '.zip'),
+                ('ALL files', '.*')
+            ]
+        }
 
     def clear_message(self):
         '''Clears the message label.'''
@@ -52,6 +62,18 @@ class DmarcReport(tk.Tk):
         # Footer.
         sc.SepLineFrame(self)
         self.msg_label = sc.MsgLabel(self)
+
+    def open(self):
+        '''Opens a file dialog which the user can select a file to open.'''
+        # TODO: Need to fix this.
+        file_name = tkfd.askopenfilename(**self.fileopts)
+        if file_name:
+            if self.record:
+                self.record.repopulate(file_name)
+            if self.policy:
+                self.policy.repopulate(file_name)
+            if self.report:
+                self.report.repopulate(file_name)
 
     def set_message(self, msg, seconds=None):
         '''Sets a message to be shown in the bottom of the program.'''
