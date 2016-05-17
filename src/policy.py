@@ -22,12 +22,12 @@ class Policy(sc.DmParserFrame):
     def initialize(self):
         '''Initializes the widgets used in policy.'''
         self.label_domain = sc.LabelFrame(self, 'Domain')
-        self.label_domain.pack()
+        self.label_domain.pack(anchor=tk.W)
         self.label_adkim = sc.LabelFrame(self, 'Adkim')
-        self.label_adkim.pack()
+        self.label_adkim.pack(anchor=tk.W)
         self.label_aspf = sc.LabelFrame(self, 'Aspf')
-        self.label_aspf.pack()
+        self.label_aspf.pack(anchor=tk.W)
         self.label_p = sc.LabelFrame(self, 'P')
-        self.label_p.pack()
+        self.label_p.pack(anchor=tk.W)
         self.label_pct = sc.LabelFrame(self, 'Pct')
-        self.label_pct.pack()
+        self.label_pct.pack(anchor=tk.W)
