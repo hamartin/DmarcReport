@@ -16,8 +16,8 @@ class About(tk.Toplevel):
         self.title('About Dmarc Report')
 
         self.transient(root)
-        killwrapper = self.register(self.kill)
-        self.protocol('WM_DELETE_WINDOW', killwrapper)
+        kill_wrapper = self.register(self.kill)
+        self.protocol('WM_DELETE_WINDOW', kill_wrapper)
 
         aboutcontent = '''
             Created by Hans Åge Martinsen
@@ -29,9 +29,9 @@ class About(tk.Toplevel):
         self.fr_main.pack()
         ttk.Label(self.fr_main, text=aboutcontent,
                   padding=(0, 0, 50, 0)).pack()
-        self.bu_ok = ttk.Button(self.fr_main, text='OK', command=killwrapper)
+        self.bu_ok = ttk.Button(self.fr_main, text='OK', command=kill_wrapper)
         self.bu_ok.focus()
-        self.bu_ok.bind('<Return>', killwrapper)
+        self.bu_ok.bind('<Return>', kill_wrapper)
         self.bu_ok.pack()
 
         root.wait_window(self)
@@ -59,12 +59,12 @@ class Menu(tk.Menu):
         self.me_file.bind('<Enter>', self.entered_file)
         self.me_file.bind('<Leave>', self.left_menu)
         self.add_cascade(label='File', underline=0, menu=self.me_file)
-        self.meabout = tk.Menu(self, tearoff=0)
-        self.meabout.add_command(label='About', underline=0,
-                                 command=self.about)
-        self.meabout.bind('<Enter>', self.entered_about)
-        self.meabout.bind('<Leave>', self.left_menu)
-        self.add_cascade(label='Help', underline=0, menu=self.meabout)
+        self.me_about = tk.Menu(self, tearoff=0)
+        self.me_about.add_command(label='About', underline=0,
+                                  command=self.about)
+        self.me_about.bind('<Enter>', self.entered_about)
+        self.me_about.bind('<Leave>', self.left_menu)
+        self.add_cascade(label='Help', underline=0, menu=self.me_about)
         self.root.config(menu=self)
 
     def about(self):
