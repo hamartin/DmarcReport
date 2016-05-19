@@ -13,8 +13,8 @@ class Report(sc.DmParserFrame):
 
     def __init__(self, root, **kwargs):
         sc.DmParserFrame.__init__(self, root, **kwargs)
-        self.config(bd=10, relief=tk.FLAT, bg='yellow')
-        tk.Label(self, text='Report', bg='pink', pady=24, padx=24,
+        self.config(bd=10, relief=tk.FLAT)
+        tk.Label(self, text='Report Metadata', pady=24, padx=24,
                  font=('courier', 24, 'bold')).pack()
 
         self.initialize()
