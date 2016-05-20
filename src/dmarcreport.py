@@ -5,6 +5,7 @@ DMARC XML/Zip information.'''
 
 import tkFileDialog as tkfd
 import Tkinter as tk
+import re
 
 import src.config as cnf
 import src.exceptions as excp
@@ -12,6 +13,7 @@ import src.policy as policy
 import src.record as record
 import src.report as report
 import src.subclassed as sc
+import src.xmldm as xmldm
 
 
 class DmarcReport(tk.Tk):
@@ -65,15 +67,23 @@ class DmarcReport(tk.Tk):
 
     def open(self):
         '''Opens a file dialog which the user can select a file to open.'''
-        # TODO: Need to fix this.
         file_name = tkfd.askopenfilename(**self.fileopts)
-        if file_name:
-            if self.record:
-                self.record.repopulate(file_name)
-            if self.policy:
-                self.policy.repopulate(file_name)
-            if self.report:
-                self.report.repopulate(file_name)
+        if not file_name or re.match(r'^\s+$', file_name):
+            self.set_message('Error! File name not valid!')
+            return
+
+        tag, root = xmldm.XmlDm(file_name).get_dictionary()
+        if not tag == 'feedback':
+            raise ValueError('Tag is not feedback!')
+        for key, val in root.iteritems():
+            if key == 'record':
+                self.record.parse_record(val)
+            elif key == 'report_metadata':
+                self.report.parse_report(val)
+            elif key == 'policy_published':
+                self.policy.parse_policy(val)
+
+        self.set_message('File {0} opened!'.format(file_name))
 
     def set_message(self, msg, seconds=None):
         '''Sets a message to be shown in the bottom of the program.'''

@@ -2,6 +2,7 @@
 
 '''Tkinter widgets subclassed for DmarcReport purposes.'''
 
+import datetime
 import Tkinter as tk
 import ttk
 
@@ -167,6 +168,7 @@ class DmParserFrame(tk.Frame):
     def __init__(self, root, **kwargs):
         tk.Frame.__init__(self, root, **kwargs)
         self.root = root
+        self.pad = 10
 
     def repopulate(self, data):
         '''Repopulates the frame.'''
@@ -181,9 +183,39 @@ class LabelFrame(tk.Frame):
         tk.Frame.__init__(self, root, **kwargs)
         self.left_label = tk.Label(self, text=header.title())
         self.left_label.pack(side=tk.LEFT)
+        self.spacer = tk.Frame(self)
+        self.spacer.pack(side=tk.LEFT, expand=True, fill=tk.X)
         self.right_label = tk.Label(self, text='')
         self.right_label.pack(side=tk.LEFT)
 
+    def clear(self):
+        '''Clears the value.'''
+        self.right_label.config(text='')
+
+    def pack(self, **args):
+        '''Packs the object.'''
+        expand = True
+        anchor = tk.W
+        fill = tk.X
+        nargs = {}
+
+        for key, value in args.iteritems():
+            if key == 'expand':
+                expand = value
+            elif key == 'anchor':
+                anchor = value
+            elif key == 'fill':
+                fill = value
+            else:
+                nargs[key] = value
+
+        tk.Frame.pack(self, fill=fill, expand=expand, anchor=anchor, **nargs)
+
     def set_value(self, text):
-        ''' Sets the right_label to text.'''
+        '''Sets the right_label to text.'''
         self.right_label.config(text=text)
+
+    def set_time_value(self, text):
+        '''Converts text int into a time and date. Then sets the value.'''
+        self.set_value(
+            datetime.datetime.fromtimestamp(int(text)).strftime("%d.%m.%Y"))
