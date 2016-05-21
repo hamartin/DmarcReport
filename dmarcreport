@@ -4,9 +4,18 @@
 '''A simple Tkinter graphical user interface for reading DMARC XML/ZIP
 files.'''
 
+import argparse
+
 import src.dmarcreport as dr
 
 
+def parse_arguments():
+    '''Parses the arguments given on the command line.'''
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--profile', default=False, action='store_true',
+                        help='Starts a profiling session.')
+    return parser.parse_args()
+
 if __name__ == '__main__':
 
-    dr.DmarcReport().run()
+    dr.DmarcReport(parse_arguments()).run()
