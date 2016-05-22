@@ -21,8 +21,7 @@ class DmarcReport(App):
     def __init__(self, args, **kwargs):
         super(DmarcReport, self).__init__(**kwargs)
         self.args = args
-        # TODO: Remove comment when ready to use .kv files.
-        # self.kv_directory = cnf.KV_DIRECTORY
+        self.kv_directory = cnf.KV_DIRECTORY
         self.use_kivy_settings = False
 
         # Variables used by the application itself.
