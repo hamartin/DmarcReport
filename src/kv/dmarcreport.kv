@@ -65,9 +65,10 @@
                             height: '48dp'
                             size_hint_y: None
                             text: 'Load'.title()
-                            on_release: root.load(_filechooser.path, _filechooser.selection)
+                            on_release: _filefooter.text = 'File {0} loaded…'.format(_filechooser.selection[0]) if root.load(_filechooser.path, _filechooser.selection) else 'Error; File could not be loaded…'
 
                 Footer:
+                    id: _filefooter
                     text: 'Choose file to load…'
 
         AccordionItem:
