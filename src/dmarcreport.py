@@ -11,6 +11,8 @@ from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
 from src import config as cnf
+from src.exceptions import ModelFileError
+from src.model import Model
 
 Builder.load_file('{0}/dmarcreport.kv'.format(cnf.KV_DIRECTORY))
 
@@ -30,11 +32,15 @@ class DmarcReportNui(FloatLayout):
 
     '''Dmarc Report NUI.'''
 
+    model = Model()
+
     def load(self, path, sel):
         '''Loads the selected file stored in path.'''
-        print path
-        print sel
+        if path and sel:
 
-    def cancel(self):
-        '''Goes back to the Dmarc Record item in the accordion.'''
-        print "Go back!"
+            try:
+                self.model.load(sel[0])
+            except ModelFileError:
+                return False
+            else:
+                return True
