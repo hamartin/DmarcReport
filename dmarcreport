@@ -4,9 +4,6 @@
 
 '''Dmarc Report.'''
 
-import kivy
-kivy.require('1.9.1')
-
 from src.dmarcreport import DmarcReport
 
 
