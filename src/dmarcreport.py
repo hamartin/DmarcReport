@@ -19,6 +19,8 @@ class DmarcReport(App):
 
     '''Dmarc Report.'''
 
+    title = 'Dmarc Report'.title()
+
     def build(self):
         '''Builds the NUI.'''
         return DmarcReportNui()
@@ -27,4 +29,5 @@ class DmarcReport(App):
 class DmarcReportNui(PageLayout):
 
     '''Dmarc Report NUI.'''
+
     pass
