@@ -1,18 +1,6 @@
 # File name: dmarcreport.kv
 #: kivy 1.9.1
 
-## Override background colors in PageLayout since all Layouts are
-## initially seethrough.
-#<Layout>:
-#    canvas:
-#        Color:
-#            rgba: 0, 0, 0, 1
-#        Rectangle:
-#            pos: self.pos
-#            size: self.size
-#
-#
-
 <Page@GridLayout>:
     cols: 1
     rows: 3
@@ -77,5 +65,6 @@
                 Header:
                     text: 'Dmarc Report'.title()
                 Body:
+                    Policy
                 Footer:
                     text: 'Viewing currently loaded file…'

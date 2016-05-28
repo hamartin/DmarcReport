@@ -3,5 +3,4 @@
 
 '''Dmarc Report config module.'''
 
-TITLE = 'Dmarc Report'.title()
 KV_DIRECTORY = 'src/kv'
