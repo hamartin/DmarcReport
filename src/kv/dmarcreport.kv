@@ -24,15 +24,6 @@
     halign: 'right'
     size_hint: 1, .05
 
-<DataLabel@GreyLabel>:
-    text_size: self.size
-
-<LabelL@DataLabel>:
-    halign: 'left'
-
-<LabelR@DataLabel>:
-    halign: 'right'
-
 <DmarcReportNui>:
     fullscreen: True
 
@@ -69,7 +60,6 @@
                     text: 'Choose file to load…'
 
         AccordionItem:
-            id: _mainitem
             title: 'Dmarc Report'.title()
             Page:
                 Header:
@@ -94,30 +84,54 @@
                                 rows: 6
                                 size_hint: 1, .9
 
-                                LabelL
+                                Label:
                                     text: 'Domain'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_domain
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Adkim'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_adkim
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Aspf'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_aspf
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Pct'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_pct
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Sp'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_sp
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'P'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.pol_p
+                                    text_size: self.size
+                                    halign: 'right'
 
                         # Report
                         BoxLayout:
@@ -134,31 +148,56 @@
                                 rows: 7
                                 size_hint: 1, .9
 
-                                LabelL:
+                                Label:
                                     text: 'Org Name'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rep_orgname
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Email'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rep_email
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Report ID'
-                                Label
-                                Label
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
+                                    text: ''
+                                Label:
+                                    text: ''
+                                Label:
                                     text: root.rep_reportid
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Date Range'
-                                Label
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
+                                    text: ''
+                                Label:
                                     text: 'Begin'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rep_begin
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'End'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rep_end
+                                    text_size: self.size
+                                    halign: 'right'
 
                         # Record
                         BoxLayout:
@@ -175,64 +214,116 @@
                                 rows: 16
                                 size_hint: 1, .9
 
-                                LabelL:
+                                Label:
                                     text: 'Row'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'Source IP'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_sourceip
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Count'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_count
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Policy Evaluated'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'Disposition'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_disposition
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'DKIM'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_ddkim
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'SPF'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_dspf
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Identifiers'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'Header From'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_headerfrom
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Auth Results'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'SPF'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'Domain'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_aspfdomain
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Result'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_aspfresult
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'DKIM'
+                                    text_size: self.size
+                                    halign: 'left'
                                 Label
-                                LabelL:
+                                Label:
                                     text: 'Domain'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_adkimdomain
-                                LabelL:
+                                    text_size: self.size
+                                    halign: 'right'
+                                Label:
                                     text: 'Result'
-                                LabelR:
+                                    text_size: self.size
+                                    halign: 'left'
+                                Label:
                                     text: root.rec_adkimresult
+                                    text_size: self.size
+                                    halign: 'right'
 
                 Footer:
                     text: 'Viewing currently loaded file…'

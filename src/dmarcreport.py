@@ -6,7 +6,6 @@
 import kivy
 kivy.require('1.9.1')
 
-from datetime import datetime
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
@@ -68,11 +67,9 @@ class DmarcReportNui(FloatLayout):
         # super(DmarcReportNui, self).__init__(**kwargs)
         FloatLayout.__init__(self, **kwargs)
 
+        # Model.
         self.model = Model()
-        self.reset_labels()
 
-    def reset_labels(self):
-        '''Resets all the labels to N/A.'''
         # Policy.
         self.pol_domain = 'N/A'
         self.pol_adkim = 'N/A'
@@ -102,7 +99,6 @@ class DmarcReportNui(FloatLayout):
 
     def load(self, path, sel):
         '''Loads the selected file stored in path.'''
-        self.reset_labels()
         if path and sel:
             try:
                 self.model.load(sel[0])
@@ -127,9 +123,8 @@ class DmarcReportNui(FloatLayout):
 
     def set_report_labels(self):
         '''Sets report labels in the NUI using model data.'''
-        self.rep_begin = get_time_value(self.model.get_rep('begin',
-                                                           'date_range'))
-        self.rep_end = get_time_value(self.model.get_rep('end', 'date_range'))
+        self.rep_begin = self.model.get_rep('begin', 'date_range')
+        self.rep_end = self.model.get_rep('end', 'date_range')
         self.rep_reportid = self.model.get_rep('report_id')
         self.rep_orgname = self.model.get_rep('org_name')
         self.rep_email = self.model.get_rep('email')
@@ -151,8 +146,3 @@ class DmarcReportNui(FloatLayout):
                                                   'dkim')
         self.rec_adkimresult = self.model.get_rec('result', 'auth_results',
                                                   'dkim')
-
-
-def get_time_value(timestamp):
-    '''Convert the timestamp into a time and date.'''
-    return datetime.fromtimestamp(int(timestamp)).strftime('%d.%m.%Y')
