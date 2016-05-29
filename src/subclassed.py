@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+# File name: subclassed.py
 
 '''Tkinter widgets subclassed for DmarcReport purposes.'''
 
