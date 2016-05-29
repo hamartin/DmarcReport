@@ -5,8 +5,3 @@
 
 import kivy
 kivy.require('1.9.1')
-
-
-class FooterError(Exception):
-    '''Base Footer error exception.'''
-    pass

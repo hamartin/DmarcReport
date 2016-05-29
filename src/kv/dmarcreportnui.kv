@@ -7,6 +7,12 @@
     rows: 2
     rows_minimum: {0: 100, 1: 350}
 
+<Footer@GreyLabel>:
+    italic: True
+    strip: True
+    halign: 'right'
+    text_size: self.size
+
 <GreyLabel@Label>:
     color: 221 / 255.0, 221 / 255.0, 221 / 255.0, .87
 
@@ -14,21 +20,10 @@
     anchor_x: 'left'
     padding: 5, 5, 5, 5
 
-<Header@GridLayout>:
-    cols: 2
-    rows: 1
-
-    Label:
-        font_size: 32
-        bold: True
-        size_hint: 1, 1
-        text: 'DMARC Report'
-
-    AnchorLayout:
-        anchor_x: 'right'
-        anchor_y: 'center'
-        OpenFile:
-            size_hint: .5, 1
+<Header@Label>:
+    font_size: 32
+    bold: True
+    size_hint: .5, 1
 
 <SubHeader@Label>:
     font_size: 25
@@ -42,7 +37,9 @@
     # Header.
     Groups:
         anchor_y: 'top'
-        Header
+
+        Header:
+            text: 'DMARC Report'
 
     # Body.
     Groups:
@@ -115,4 +112,4 @@
         anchor_y: 'bottom'
         
         Footer:
-            text: 'Ready…'
+            text: 'Footer'
