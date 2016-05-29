@@ -7,22 +7,23 @@ import kivy
 kivy.require('1.9.1')
 
 from kivy.app import App
+from kivy.lang import Builder
+from kivy.uix.gridlayout import GridLayout
 
 from src import config as cnf
-from src.footer import Footer
+
+
+class DmarcReportNui(GridLayout):
+
+    '''Dmarc Report App.'''
+
+    Builder.load_file('{0}/dmarcreportnui.kv'.format(cnf.KV_DIRECTORY))
 
 
 class DmarcReport(App):
 
     '''Dmarc Report.'''
 
-    def __init__(self, **kwargs):
-        super(DmarcReport, self).__init__(**kwargs)
-        self.kv_directory = cnf.KV_DIRECTORY
-        self.footer = Footer()
-
-        # Self is the view.
-        # Model.
-        # TODO: Put the model in here when you get that far.
-        # Controller.
-        # TODO: Put the controller in here when you get that far.
+    def build(self):
+        '''Creates the GNUI.'''
+        return DmarcReportNui()
