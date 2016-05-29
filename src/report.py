@@ -27,11 +27,11 @@ class Report(BoxLayout):
     def initialize(self):
         '''Initializes all the widgets.'''
         self.add_widget(Label(text='[b]Report Metadata[/b]', markup=True,
-                        font_size='25sp'))
+                              font_size='25sp'))
         self.add_widget(self.var_org_name)
         self.add_widget(self.var_email)
         self.add_widget(self.var_report_id)
         self.add_widget(Label(text='[b]Date Range[/b]', markup=True,
-                        font_size='15sp'))
+                              font_size='15sp'))
         self.add_widget(self.var_begin)
         self.add_widget(self.var_end)
