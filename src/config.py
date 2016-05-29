@@ -6,5 +6,4 @@
 import kivy
 kivy.require('1.9.1')
 
-TITLE = 'Dmarc Report'.title()
 KV_DIRECTORY = 'src/kv'
