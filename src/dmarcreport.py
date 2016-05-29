@@ -8,7 +8,7 @@ kivy.require('1.9.1')
 
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.pagelayout import PageLayout
 
 from src import config as cnf
 
@@ -19,22 +19,15 @@ class DmarcReport(App):
 
     '''Dmarc Report.'''
 
-    title = cnf.TITLE
+    title = 'Dmarc Report'.title()
 
     def build(self):
         '''Builds the NUI.'''
         return DmarcReportNui()
 
 
-class DmarcReportNui(FloatLayout):
+class DmarcReportNui(PageLayout):
 
     '''Dmarc Report NUI.'''
 
-    def load(self, path, sel):
-        '''Loads the selected file stored in path.'''
-        print path
-        print sel
-
-    def cancel(self):
-        '''Goes back to the Dmarc Record item in the accordion.'''
-        print "Go back!"
+    pass

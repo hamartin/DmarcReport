@@ -1,80 +1,60 @@
 # File name: dmarcreport.kv
 #: kivy 1.9.1
 
-## Override background colors in PageLayout since all Layouts are
-## initially seethrough.
-#<Layout>:
-#    canvas:
-#        Color:
-#            rgba: 0, 0, 0, 1
-#        Rectangle:
-#            pos: self.pos
-#            size: self.size
-#
-#
+# Override background colors in PageLayout since all Layouts are
+# initially seethrough.
+<Layout>:
+    canvas:
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
-<Page@GridLayout>:
+<Body@GridLayout>:
     cols: 1
-    rows: 3
+    rows: 2
 
-<GreyLabel@Label>:
-    color: 211 / 255.0, 211 / 255.0, 211 / 255.0, .87
-
-<Header@GreyLabel>:
-    size_hint: .5, .2
-    font_size: '32sp'
-    bold: True
-
-<Body@AnchorLayout>:
+<Page@AnchorLayout>:
     anchor_x: 'center'
     anchor_y: 'center'
-    size_hint: 1, .75
+    size_hint: 1, .9
 
-<Footer@GreyLabel>:
+<Footer@Label>:
+    color: 211 / 255.0, 211 / 255.0, 211 / 255.0, .87
     size: self.size
     pos: self.pos
     halign: 'right'
-    size_hint: 1, .05
+    size_hint: 1, .1
 
+# Two pages. Start at the first page.
 <DmarcReportNui>:
-    fullscreen: True
+    page: 0
+    border: 120
+    swipe_threshold: .4
 
-    Accordion:
-        orientation: 'horizontal'
-        anim_duration: 2
+    # First page.
+    Body:
 
-        AccordionItem:
-            title: 'Load File'.title()
-            Page:
-                Header:
-                    text: 'Load File'.title()
-                Body:
-                    BoxLayout:
-                        orientation: 'vertical'
+        Page:
+            Label:
+                font_size: 32
+                markup: True
+                text: '[b]Dmarc report[/b]'
 
-                        FileChooser:
-                            id: _filechooser
-                            dirselect: False
-                            multiselect: False
-                            show_hidden: False
-                            path: '~/'
-                            filters: ['*.[Zz][Ii][Pp]', '*.[Xx][Mm][Ll]']
-                            FileChooserIconLayout
+        # Footer.
+        Footer:
+            text: 'Swipe left to load file'
 
-                        Button:
-                            height: '48dp'
-                            size_hint_y: None
-                            text: 'Load'.title()
-                            on_release: root.load(_filechooser.path, _filechooser.selection)
+    # Second page.
+    Body:
 
-                Footer:
-                    text: 'Choose file to load…'
+        Page:
+            Label:
+                font_size: 32
+                markup: True
+                text: '[b]Load file[/b]'
 
-        AccordionItem:
-            title: 'Dmarc Report'.title()
-            Page:
-                Header:
-                    text: 'Dmarc Report'.title()
-                Body:
-                Footer:
-                    text: 'Viewing currently loaded file…'
+        # Footer.
+        Footer:
+            text: 'Choose file to load'
