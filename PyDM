@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# File name: PyDM
 
 '''A simple Tkinter graphical user interface for reading DMARC XML/ZIP
 files.'''
