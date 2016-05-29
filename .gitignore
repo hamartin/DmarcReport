@@ -5,3 +5,6 @@
 
 # Old files we keep just in case.
 src/old/*
+
+# Vim swap files.
+*.swp
