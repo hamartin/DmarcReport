@@ -123,11 +123,11 @@ class DmarcReportNui(FloatLayout):
 
     def set_report_labels(self):
         '''Sets report labels in the NUI using model data.'''
-        self.rep_orgname = self.model.get_rep('org_name')
-        self.rep_email = self.model.get_rep('email')
-        self.rep_reportid = self.model.get_rep('report_id')
         self.rep_begin = self.model.get_rep('begin', 'date_range')
         self.rep_end = self.model.get_rep('end', 'date_range')
+        self.rep_reportid = self.model.get_rep('report_id')
+        self.rep_orgname = self.model.get_rep('org_name')
+        self.rep_email = self.model.get_rep('email')
 
     def set_record_labels(self):
         '''Sets record labels in the NUI using model data.'''
