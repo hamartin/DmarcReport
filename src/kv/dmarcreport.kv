@@ -1,0 +1,37 @@
+# File name: dmarcreport.kv
+#: kivy 1.9.1
+
+
+<BodyGroups@AnchorLayout>:
+    anchor_x: 'left'
+    padding: 5, 5, 5, 5
+
+
+GridLayout:
+    cols: 1
+    rows: 3
+
+    cols_minimum: {}
+    rows_minimum: {0: 100, 1: 450, 2: 50}
+
+    # Header
+    BodyGroups:
+        anchor_y: 'top'
+
+        MyHeaderLabel:
+            text: 'Header'
+
+    # Body
+    BodyGroups:
+        anchor_y: 'center'
+
+        Label:
+            text: 'Body'
+            font_size: 32
+
+    # Footer
+    BodyGroups:
+        anchor_y: 'bottom'
+
+        Footer:
+            text: 'Footer'
