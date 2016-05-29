@@ -9,4 +9,5 @@ import src.dmarcreport as dr
 
 if __name__ == '__main__':
 
-    dr.DmarcReport().run()
+    WIN = dr.DmarcReport()
+    WIN.mainloop()
