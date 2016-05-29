@@ -1,2 +1,10 @@
+# Python binary files.
 *.pyc
+# Profiling files for Kivy.
+*.profile
+
+# Old files we keep just in case.
+src/old/*
+
+# Vim swap files.
 *.swp

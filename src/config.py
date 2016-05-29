@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # File name: config.py
 
-'''Configuration for Dmarc Report.'''
+'''Dmarc Report config module.'''
 
-PROG_NAME = 'Dmarc Report'
+KV_DIRECTORY = 'src/kv'
