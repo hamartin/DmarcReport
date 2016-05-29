@@ -24,12 +24,10 @@ class DmarcReport(App):
 
         # Variables used by the application itself.
         self.profile = None
-        self.front = dmf.DmarcReportFront()
 
     def build(self):
         '''Builds Dmarc Report.'''
-        self.front.set_footer_message('Ready…')
-        return self.front
+        return dmf.DmarcReportFront()
 
     def open_settings(self, *largs):
         '''Handles the settings window.'''

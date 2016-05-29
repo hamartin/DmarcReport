@@ -17,7 +17,7 @@ class DmarcFrontLabel(BoxLayout):
         super(DmarcFrontLabel, self).__init__(**kwargs)
         self.orientation = 'horizontal'
 
-        self.add_widget(Label(text=text.title()))
+        self.add_widget(Label(text=text))
         self.value = Label(text='')
         self.add_widget(self.value)
 
