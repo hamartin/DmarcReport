@@ -8,11 +8,12 @@ kivy.require('1.9.1')
 
 from kivy.app import App
 
-from src import config as cnf
-
 
 class DmarcReport(App):
 
     '''Dmarc Report'''
 
-    kv_directory = cnf.KV_DIRECTORY
+    def build(self):
+        '''Builds the Dmarc Report front end.'''
+        from kivy.uix.label import Label
+        return Label(text='Dmarc Report')
