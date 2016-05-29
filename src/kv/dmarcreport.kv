@@ -1,4 +1,4 @@
-# File name: dmarcreportnui.kv
+# File name: dmarcreport.kv
 #: kivy 1.9.1
 
 <Body@GridLayout>:
@@ -6,12 +6,6 @@
     cols_minimum: {}
     rows: 2
     rows_minimum: {0: 100, 1: 350}
-
-<Footer@GreyLabel>:
-    italic: True
-    strip: True
-    halign: 'right'
-    text_size: self.size
 
 <GreyLabel@Label>:
     color: 221 / 255.0, 221 / 255.0, 221 / 255.0, .87
@@ -28,20 +22,20 @@
 <SubHeader@Label>:
     font_size: 25
 
-<DmarcReportNui>:
+GridLayout:
     cols: 1
     cols_minimum: {}
     rows: 3
     rows_minimum: {0: 100, 1: 450, 2: 50}
 
-    # Header.
+    # Header
     Groups:
         anchor_y: 'top'
 
         Header:
             text: 'DMARC Report'
 
-    # Body.
+    # Body
     Groups:
         anchor_y: 'center'
 
@@ -54,62 +48,67 @@
                 text: 'Report Metadata'
             BoxLayout:
                 orientation: 'vertical'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
             BoxLayout:
                 orientation: 'vertical'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
             BoxLayout:
                 orientation: 'vertical'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
-                GreyLabel:
+                Label:
                     text: '1'
-                GreyLabel:
+                Label:
                     text: '2'
-                GreyLabel:
+                Label:
                     text: '3'
-                GreyLabel:
+                Label:
                     text: '4'
 
-    # Footer.
+    # Footer
     Groups:
         anchor_y: 'bottom'
-        
+
         Footer:
             text: 'Footer'
+            italic: True
+            strip: True
+            halign: 'right'
+            text_size: self.size
+            color: 221 / 255.0, 221 / 255.0, 221 / 255.0, .87
