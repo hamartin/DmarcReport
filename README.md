@@ -5,10 +5,13 @@ content in a human readable form.
 
 ## Dmarc Report tKinter
 
-The master branch is the original Dmarc Report application created using
-tKinter as a frontend. If there is going to be any more developing on
-this application, it will be done on the kivy branch for estetical
-reasons.
+The Dmarc Report using tkinter development is no longer in active
+development. Meaning if any new code is to be added to this small
+project, then that development will be done in the master or kivy
+branch.
+
+The reasons for this is mostly esthetics, but also because kivy seems
+to be more multi platform focused.
 
 ## Dmarc Report Kivy
 
