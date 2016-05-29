@@ -7,8 +7,6 @@ and the other is dynamic.'''
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
-import src.config as cnf
-
 
 class DmarcFrontLabel(BoxLayout):
 
@@ -19,12 +17,10 @@ class DmarcFrontLabel(BoxLayout):
         super(DmarcFrontLabel, self).__init__(**kwargs)
         self.orientation = 'horizontal'
 
-        self.add_widget(Label(
-            text=cnf.COLOR1BEGIN + text.title() + cnf.COLORSTOP, markup=True,
-            halign='left', text_size=(100, None)))
-        self.value = Label(text='', markup=True, halign='right')
+        self.add_widget(Label(text=text.title()))
+        self.value = Label(text='')
         self.add_widget(self.value)
 
     def set_value(self, val):
         '''Sets the value.'''
-        self.value.text = cnf.COLOR1BEGIN + val + cnf.COLORSTOP
+        self.value.text = val

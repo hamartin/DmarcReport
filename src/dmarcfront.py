@@ -72,5 +72,4 @@ class DmarcReportFooter(Label):
 
     def set_value(self, text=''):
         '''Sets the text shown in the footer.'''
-        self.markup = True
-        self.text = cnf.COLOR1BEGIN + text + cnf.COLORSTOP
+        self.text = text
