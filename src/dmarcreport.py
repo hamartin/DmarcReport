@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+# File name: dmarcreport.py
 
 '''A simple Tkinter graphical user interface for reading and displaying
 DMARC XML/Zip information.'''
