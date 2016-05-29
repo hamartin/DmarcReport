@@ -1,49 +1,7 @@
 # File name: dmarcreport.kv
 #: kivy 1.9.1
 
-GridLayout:
-    cols: 1
-    rows: 3
-
-    # Header
-    AnchorLayout:
-        anchor_x: 'left'
-        anchor_y: 'top'
-        padding: 5, 5, 5, 5
-
-        Label:
-            text: 'Header'
-            font_size: 32
-            size_hint: .5, .7
-
-    # Body
-    AnchorLayout:
-        anchor_x: 'left'
-        anchor_y: 'center'
-        padding: 5, 5, 5, 5
-
-        Label:
-            text: 'Body'
-            font_size: 32
-
-    # Footer
-    AnchorLayout:
-        anchor_x: 'left'
-        anchor_y: 'bottom'
-        padding: 5, 5, 5, 5
-
-        Label:
-            text: 'Footer'
-            font_size: 32
-
-#BoxLayout:
-#    orientation: 'vertical'
-#    Camera:
-#        id: camera
-#        resolution: (640, 480)
-#        play: False
-#    ToggleButton:
-#        text: 'Play'
-#        on_press: camera.play = not camera.play
-#        size_hint_y: None
-#        height: '48dp'
+Label:
+    text: '[b]Testing this out![/b]'
+    font_size: 32
+    markup: True
