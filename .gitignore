@@ -1,4 +1,2 @@
-# Python binary files.
 *.pyc
-# Profiling files for Kivy.
 *.profile
