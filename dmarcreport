@@ -7,9 +7,6 @@
 import kivy
 kivy.require('1.9.1')
 
-from src.dmarcreport import DmarcReport
-
 
 if __name__ == '__main__':
-    DMR = DmarcReport()
-    DMR.run()
+    pass
