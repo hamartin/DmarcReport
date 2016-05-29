@@ -6,8 +6,9 @@
 import zipfile
 
 from xml.etree import ElementTree
+from xml.etree.ElementTree import ParseError
 
-from src.exceptions import ModelError
+from src.exceptions import ModelError, ModelFileError
 
 
 class Model(object):
@@ -28,29 +29,25 @@ class Model(object):
             if zipfile.is_zipfile(filename):
                 try:
                     fpz = zipfile.ZipFile(filename)
-                except IOError:
-                    return False
+                except IOError, err:
+                    raise ModelFileError(err)
                 else:
                     if len(fpz.infolist()) != 1:
-                        return False
+                        raise ModelFileError(
+                            'Zip file does not contain just 1 file!')
                     else:
                         zipfp = fpz.infolist()[0]
                         fpn = fpz.open(zipfp)
             else:
                 try:
                     fpn = open(filename, 'r')
-                except IOError:
-                    return False
+                except IOError, err:
+                    raise ModelFileError(err)
         else:
-            return False
+            raise ModelFileError('File name is not ok')
 
-        try:
-            self.populate(fpn)
-        except ModelError:
-            return False
-        else:
-            self.filename = filename
-            return True
+        self.populate(fpn)
+        self.filename = filename
 
     def populate(self, fpn):
         '''Reads the file and populates the NUI.'''
@@ -64,32 +61,33 @@ class Model(object):
     def get_pol(self, attr):
         '''Returns the attr value for policy report.'''
         try:
-            return self.data[1]['policy_published'][attr]
-        except KeyError:
+            pol = self.data[1]['policy_published']
+            return pol[attr]
+        except (KeyError, TypeError):
             return 'N/A'
 
     def get_rep(self, attr, sub=None):
         '''Returns the attr value for report metadata.'''
-        rep = self.data[1]['report_metadata']
         try:
+            rep = self.data[1]['report_metadata']
             if not sub:
                 return rep[attr]
             else:
                 return rep[sub][attr]
-        except KeyError:
+        except (KeyError, TypeError):
             return 'N/A'
 
     def get_rec(self, attr, sub=None, subsub=None):
         '''Returns the attr value for record.'''
-        rec = self.data[1]['record']
         try:
+            rec = self.data[1]['record']
             if sub and subsub:
                 return rec[sub][subsub][attr]
             elif sub:
                 return rec[sub][attr]
             else:
                 return rec[attr]
-        except KeyError:
+        except (KeyError, TypeError):
             return 'N/A'
 
 
@@ -98,7 +96,10 @@ def get_root(fpn):
     if not fpn:
         raise ModelError('No file pointer given.')
 
-    tree = ElementTree.parse(fpn)
+    try:
+        tree = ElementTree.parse(fpn)
+    except ParseError, err:
+        raise ModelError(err)
     root = tree.getroot()
     return root
 
