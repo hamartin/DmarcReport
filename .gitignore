@@ -2,6 +2,3 @@
 *.pyc
 # Profiling files for Kivy.
 *.profile
-
-# Old files we keep just in case.
-src/old/*
