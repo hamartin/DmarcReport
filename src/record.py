@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+# File name: record.py
 
 '''Record part of DMARC.'''
 
