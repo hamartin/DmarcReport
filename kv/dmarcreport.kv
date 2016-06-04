@@ -3,6 +3,7 @@
 
 <DmarcReportNui>:
     fullscreen: True
+    id: _dmreport
 
     BoxLayout:
         orientation: 'vertical'
@@ -17,7 +18,7 @@
                 text: 'Dmarc Report'
                 font_size: '32sp'
                 bold: True
-                
+
             AnchorLayout:
                 size_hint: .5, 1
                 anchor_x: 'center'
@@ -25,13 +26,43 @@
                 ImageButton:
                     id: _imagebutton
                     footer: _footer
+                    model: _dmreport.model
+                    reportb: _reportb
+                    recordb: _recordb
+                    policyb: _policyb
                     size_hint: .2, .5
                     on_release: self.openfile()
 
         # Body.
-        BoxLayout:
+        Body:
+            id: _body
+            bodydata: _bodydata
+            model: root.model
+            footer: _footer
             orientation: 'vertical'
             size_hint: 1, .65
+
+            BodyButtons:
+                id: _bodybuttons
+
+                Button:
+                    id: _reportb
+                    text: 'Report Metadata'
+                    disabled: True
+                    on_release: _body.reload('report')
+                Button:
+                    id: _recordb
+                    text: 'Record'
+                    disabled: True
+                    on_release: _body.reload('record')
+                Button:
+                    id: _policyb
+                    text: 'Policy Reported'
+                    disabled: True
+                    on_release: _body.reload('policy')
+
+            BodyData
+                id: _bodydata
 
         # Footer.
         BoxLayout:
@@ -70,3 +101,170 @@
         Button:
             text: 'Cancel'
             on_release: _openfile.dismiss()
+
+<BodyButtons@BoxLayout>:
+    orientation: 'horizontal'
+    spacing: '5sp'
+    size_hint: 1, .1
+
+<BodyData@BoxLayout>:
+    size_hint: 1, .9
+    orientation: 'vertical'
+
+<GreyLabel@Label>:
+    color: 211 / 255.0, 211 / 255.0, 211 / 255.0, .87
+
+<DataLabel@GreyLabel>:
+    text_size: self.size
+
+<LabelL@DataLabel>:
+    halign: 'left'
+
+<LabelR@DataLabel>:
+    halign: 'right'
+
+<Policy>:
+    orientation: 'horizontal'
+
+    GridLayout:
+        cols: 2
+        rows: 6
+        size_hint: 1, .5
+
+        LabelL
+            text: 'Domain'
+        LabelR:
+            text: root.pol_domain
+        LabelL:
+            text: 'Adkim'
+        LabelR:
+            text: root.pol_adkim
+        LabelL:
+            text: 'Aspf'
+        LabelR:
+            text: root.pol_aspf
+        LabelL:
+            text: 'Pct'
+        LabelR:
+            text: root.pol_pct
+        LabelL:
+            text: 'Sp'
+        LabelR:
+            text: root.pol_sp
+        LabelL:
+            text: 'P'
+        LabelR:
+            text: root.pol_p
+
+    BoxLayout:
+        size_hint: 1, .5
+
+<Record>:
+    orientation: 'horizontal'
+
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: '20sp'
+
+        GridLayout:
+            cols: 2
+            rows: 8
+            size_hint: .5, 1
+
+            LabelL:
+                text: 'Row'
+            Label
+            LabelL:
+                text: 'Source IP'
+            LabelR:
+                text: root.rec_sourceip
+            LabelL:
+                text: 'Count'
+            LabelR:
+                text: root.rec_count
+            LabelL:
+                text: 'Policy Evaluated'
+            Label
+            LabelL:
+                text: 'Disposition'
+            LabelR:
+                text: root.rec_disposition
+            LabelL:
+                text: 'DKIM'
+            LabelR:
+                text: root.rec_ddkim
+            LabelL:
+                text: 'SPF'
+            LabelR:
+                text: root.rec_dspf
+            LabelL:
+                text: 'Identifiers'
+            Label
+
+        GridLayout:
+            cols: 2
+            rows: 8
+            size_hint: .5, 1
+
+            LabelL:
+                text: 'Header From'
+            LabelR:
+                text: root.rec_headerfrom
+            LabelL:
+                text: 'Auth Results'
+            Label
+            LabelL:
+                text: 'SPF'
+            Label
+            LabelL:
+                text: 'Domain'
+            LabelR:
+                text: root.rec_aspfdomain
+            LabelL:
+                text: 'Result'
+            LabelR:
+                text: root.rec_aspfresult
+            LabelL:
+                text: 'DKIM'
+            Label
+            LabelL:
+                text: 'Domain'
+            LabelR:
+                text: root.rec_adkimdomain
+            LabelL:
+                text: 'Result'
+            LabelR:
+                text: root.rec_adkimresult
+
+<Report>:
+    orientation: 'vertical'
+
+    GridLayout:                                         
+        cols: 2                                         
+        rows: 7                                         
+                                                                                    
+        LabelL:                                         
+            text: 'Org Name'                            
+        LabelR:                                         
+            text: root.rep_orgname                      
+        LabelL:                                         
+            text: 'Email'                               
+        LabelR:                                         
+            text: root.rep_email                        
+        LabelL:                                         
+            text: 'Report ID'                           
+        Label                                           
+        Label                                           
+        LabelR:                                         
+            text: root.rep_reportid                     
+        LabelL:                                         
+            text: 'Date Range'                          
+        Label                                           
+        LabelL:                                         
+            text: 'Begin'                               
+        LabelR:                                         
+            text: root.rep_begin                        
+        LabelL:                                         
+            text: 'End'                                 
+        LabelR:                                         
+            text: root.rep_end   

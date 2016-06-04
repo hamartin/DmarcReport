@@ -6,10 +6,12 @@
 import kivy
 kivy.require('1.9.1')
 
+from datetime import datetime
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
+from kivy.properties import StringProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -17,6 +19,8 @@ from kivy.uix.image import Image
 from kivy.uix.popup import Popup
 
 from src import config as cnf
+from src.exceptions import ModelFileError
+from src.model import Model
 
 
 class DmarcReport(App):
@@ -34,12 +38,19 @@ class DmarcReportNui(FloatLayout):
 
     '''Dmarc Report NUI.'''
 
+    model = ObjectProperty(Model())
+
 
 class ImageButton(ButtonBehavior, Image):
 
     '''Kivy button with image instead of label.'''
 
     footer = ObjectProperty()
+    model = ObjectProperty()
+
+    reportb = ObjectProperty()
+    recordb = ObjectProperty()
+    policyb = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(ImageButton, self).__init__(**kwargs)
@@ -66,10 +77,12 @@ class ImageButton(ButtonBehavior, Image):
 
     def openfile(self):
         '''Creates a popup window where a file to open can be chosen.'''
-        content = OpenFile(footer=self.footer)
+        content = OpenFile(footer=self.footer, reportb=self.reportb,
+                           recordb=self.recordb, policyb=self.policyb)
         self.popup = Popup(title='Open file', content=content,
                            size_hint=(.8, .8))
         content.popup = self.popup
+        content.model = self.model
         self.popup.open()
 
 
@@ -78,7 +91,12 @@ class OpenFile(BoxLayout):
     '''Open file popup window.'''
 
     footer = ObjectProperty()
+    model = ObjectProperty()
     popup = ObjectProperty()
+
+    reportb = ObjectProperty()
+    recordb = ObjectProperty()
+    policyb = ObjectProperty()
 
     def dismiss(self):
         '''Dismisses the popup we're in.'''
@@ -92,13 +110,153 @@ class OpenFile(BoxLayout):
             return
 
         try:
-            # Try to open file and get data.
-            print filename
-        except:
-            self.footer.text = 'Something failed!'
+            self.model.load(filename)
+        except ModelFileError, err:
+            self.reportb.disabled = True
+            self.recordb.disabled = True
+            self.policyb.disabled = True
+            self.footer.text = 'Error! {0}'.format(err.message)
         else:
-            self.footer.text = 'File opened: {0}'.format(filename[0])
+            self.reportb.disabled = False
+            self.recordb.disabled = False
+            self.policyb.disabled = False
+            self.footer.text = 'File opened: {0}'.format(filename)
             self.dismiss()
 
 
+class Body(BoxLayout):
+
+    '''Dmarc Report body.'''
+
+    bodydata = ObjectProperty()
+    model = ObjectProperty()
+    footer = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        # super(Body, self).__init__(**kwargs)
+        BoxLayout.__init__(self, **kwargs)
+
+        self.loaded = ''
+
+    def reload(self, group):
+        '''Reloads the group widgets if group not the same as loaded.'''
+        if group == self.loaded:
+            return
+        else:
+            self.loaded = group
+
+        self.bodydata.clear_widgets()
+
+        if group == 'report':
+            self.bodydata.add_widget(Report(model=self.model))
+            self.footer.text = 'Showing Report Metadata group…'
+        elif group == 'record':
+            self.bodydata.add_widget(Record(model=self.model))
+            self.footer.text = 'Showing Record group…'
+        else:
+            self.bodydata.add_widget(Policy(model=self.model))
+            self.footer.text = 'Showing Policy Reported group…'
+
+
+class Groups(BoxLayout):
+
+    '''Dmarc Report groups.'''
+
+    def __init__(self, **kwargs):
+        # super(Groups, self).__init__(**kwargs)
+        BoxLayout.__init__(self, **kwargs)
+        self.size_hint = (1, .9)
+        self.orientation = 'vertical'
+
+        self.model = None
+        if 'model' in kwargs:
+            self.model = kwargs['model']
+
+
+class Record(Groups):
+
+    '''Dmarc Report Record group.'''
+
+    rec_sourceip = StringProperty()
+    rec_count = StringProperty()
+    rec_disposition = StringProperty()
+    rec_ddkim = StringProperty()
+    rec_dspf = StringProperty()
+    rec_headerfrom = StringProperty()
+    rec_aspfdomain = StringProperty()
+    rec_aspfresult = StringProperty()
+    rec_adkimdomain = StringProperty()
+    rec_adkimresult = StringProperty()
+
+    def __init__(self, **kwargs):
+        # super(Record, self).__init__(**kwargs)
+        Groups.__init__(self, **kwargs)
+
+        self.rec_sourceip = self.model.get_rec('source_ip', 'row')
+        self.rec_count = self.model.get_rec('count', 'row')
+        self.rec_disposition = self.model.get_rec('disposition', 'row',
+                                                  'policy_evaluated')
+        self.rec_ddkim = self.model.get_rec('dkim', 'row', 'policy_evaluated')
+        self.rec_dspf = self.model.get_rec('spf', 'row', 'policy_evaluated')
+        self.rec_headerfrom = self.model.get_rec('header_from', 'identifiers')
+        self.rec_aspfdomain = self.model.get_rec('domain', 'auth_results',
+                                                 'spf')
+        self.rec_aspfresult = self.model.get_rec('result', 'auth_results',
+                                                 'spf')
+        self.rec_adkimdomain = self.model.get_rec('domain', 'auth_results',
+                                                  'dkim')
+        self.rec_adkimresult = self.model.get_rec('result', 'auth_results',
+                                                  'dkim')
+
+
+class Report(Groups):
+
+    '''Dmarc Report Report group.'''
+
+    rep_orgname = StringProperty()
+    rep_email = StringProperty()
+    rep_reportid = StringProperty()
+    rep_begin = StringProperty()
+    rep_end = StringProperty()
+
+    def __init__(self, **kwargs):
+        # super(Report, self).__init__(**kwargs)
+        Groups.__init__(self, **kwargs)
+
+        self.rep_begin = get_time_value(self.model.get_rep('begin',
+                                                           'date_range'))
+        self.rep_end = get_time_value(self.model.get_rep('end', 'date_range'))
+        self.rep_reportid = self.model.get_rep('report_id')
+        self.rep_orgname = self.model.get_rep('org_name')
+        self.rep_email = self.model.get_rep('email')
+
+
+class Policy(Groups):
+
+    '''Dmarc Report Policy group.'''
+
+    pol_p = StringProperty()
+    pol_sp = StringProperty()
+    pol_pct = StringProperty()
+    pol_aspf = StringProperty()
+    pol_adkim = StringProperty()
+    pol_domain = StringProperty()
+
+    def __init__(self, **kwargs):
+        # super(Policy, self).__init__(**kwargs)
+        Groups.__init__(self, **kwargs)
+
+        self.pol_domain = self.model.get_pol('domain')
+        self.pol_adkim = self.model.get_pol('adkim')
+        self.pol_aspf = self.model.get_pol('aspf')
+        self.pol_pct = self.model.get_pol('pct')
+        self.pol_sp = self.model.get_pol('sp')
+        self.pol_p = self.model.get_pol('p')
+
+
 Builder.load_file('{0}/dmarcreport.kv'.format(cnf.KV_DIRECTORY))
+
+
+def get_time_value(timestamp):
+    '''Convert the timestamp into a time and date.'''
+    return datetime.fromtimestamp(int(timestamp)).strftime('%d.%m.%Y')
