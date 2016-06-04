@@ -86,7 +86,9 @@ class OpenFile(BoxLayout):
 
     def load(self, filename):
         '''Loads the file given to it.'''
-        if not filename:
+        if filename:
+            filename = filename[0]
+        else:
             return
 
         try:
@@ -95,7 +97,7 @@ class OpenFile(BoxLayout):
         except:
             self.footer.text = 'Something failed!'
         else:
-            self.footer.text = 'File opened: {0}'.format(filename)
+            self.footer.text = 'File opened: {0}'.format(filename[0])
             self.dismiss()
 
 
