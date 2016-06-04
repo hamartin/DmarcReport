@@ -1,0 +1,72 @@
+# File name: dmarcreport.kv
+#: kivy 1.9.1
+
+<DmarcReportNui>:
+    fullscreen: True
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        # Header.
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, .25
+
+            Label:
+                size_hint: .5, 1
+                text: 'Dmarc Report'
+                font_size: '32sp'
+                bold: True
+                
+            AnchorLayout:
+                size_hint: .5, 1
+                anchor_x: 'center'
+                anchor_y: 'center'
+                ImageButton:
+                    id: _imagebutton
+                    footer: _footer
+                    size_hint: .2, .5
+                    on_release: self.openfile()
+
+        # Body.
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, .65
+
+        # Footer.
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, .1
+
+            Label:
+                id: _footer
+                text: 'Ready…'
+                text_size: self.size
+                halign: 'right'
+                padding: '10sp', '10sp'
+                markup: True
+
+<OpenFile>:
+    orientation: 'vertical'
+    id: _openfile
+
+    FileChooserIconView:
+        id: _filechooser
+        size_hint: 1, .9
+        filter_dirs: False
+        filters: ['*.[Xx][Mm][Ll]', '*.[Zz][Ii][Pp]', ]
+        multiselect: False
+        path: '~/'
+        show_hidden: False
+
+    BoxLayout:
+        size_hint: 1, .1
+        orientation: 'horizontal'
+        spacing: '5sp'
+
+        Button:
+            text: 'Load file'
+            on_release: _openfile.load(_filechooser.selection)
+        Button:
+            text: 'Cancel'
+            on_release: _openfile.dismiss()

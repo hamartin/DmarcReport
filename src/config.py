@@ -3,4 +3,7 @@
 
 '''Dmarc Report config module.'''
 
-KV_DIRECTORY = 'src/kv'
+KV_DIRECTORY = 'kv'
+
+IMAGENORMAL = 'img/openfile-gr.png'
+IMAGEOVER = 'img/openfile-wh.png'

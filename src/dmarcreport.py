@@ -6,17 +6,17 @@
 import kivy
 kivy.require('1.9.1')
 
-from datetime import datetime
 from kivy.app import App
+from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
+from kivy.uix.popup import Popup
 
 from src import config as cnf
-from src.exceptions import ModelError
-from src.model import Model
-
-Builder.load_file('{0}/dmarcreport.kv'.format(cnf.KV_DIRECTORY))
 
 
 class DmarcReport(App):
@@ -34,125 +34,69 @@ class DmarcReportNui(FloatLayout):
 
     '''Dmarc Report NUI.'''
 
-    # Model
-    model = ObjectProperty()
 
-    # Policy.
-    pol_p = StringProperty()
-    pol_sp = StringProperty()
-    pol_pct = StringProperty()
-    pol_aspf = StringProperty()
-    pol_adkim = StringProperty()
-    pol_domain = StringProperty()
+class ImageButton(ButtonBehavior, Image):
 
-    # Report metadata.
-    rep_orgname = StringProperty()
-    rep_email = StringProperty()
-    rep_reportid = StringProperty()
-    rep_begin = StringProperty()
-    rep_end = StringProperty()
+    '''Kivy button with image instead of label.'''
 
-    # Record.
-    rec_sourceip = StringProperty()
-    rec_count = StringProperty()
-    rec_disposition = StringProperty()
-    rec_ddkim = StringProperty()
-    rec_dspf = StringProperty()
-    rec_headerfrom = StringProperty()
-    rec_aspfdomain = StringProperty()
-    rec_aspfresult = StringProperty()
-    rec_adkimdomain = StringProperty()
-    rec_adkimresult = StringProperty()
+    footer = ObjectProperty()
 
     def __init__(self, **kwargs):
-        # super(DmarcReportNui, self).__init__(**kwargs)
-        FloatLayout.__init__(self, **kwargs)
+        super(ImageButton, self).__init__(**kwargs)
+        Window.bind(mouse_pos=self.on_motion)
+        self.source = cnf.IMAGENORMAL
+        self.popup = None
 
-        self.model = Model()
-        self.reset_labels()
+        for key, val in kwargs.iteritems():
+            if key == 'source':
+                self.source = val
 
-    def reset_labels(self):
-        '''Resets all the labels to N/A.'''
-        # Policy.
-        self.pol_domain = 'N/A'
-        self.pol_adkim = 'N/A'
-        self.pol_aspf = 'N/A'
-        self.pol_pct = 'N/A'
-        self.pol_sp = 'N/A'
-        self.pol_p = 'N/A'
+    def on_motion(self, etype, motionevent):
+        '''When mouse is above image, change picture.'''
+        if etype and motionevent:
+            if self.collide_point(Window.mouse_pos[0], Window.mouse_pos[1]) \
+                    and self.source != cnf.IMAGEOVER:
+                self.source = cnf.IMAGEOVER
+                self.footer.text = 'Open file…'
+            elif(not self.collide_point(Window.mouse_pos[0],
+                                        Window.mouse_pos[1]) and
+                 self.source != cnf.IMAGENORMAL):
+                self.source = cnf.IMAGENORMAL
+                self.footer.text = ''
 
-        # Report metadata.
-        self.rep_orgname = 'N/A'
-        self.rep_email = 'N/A'
-        self.rep_reportid = 'N/A'
-        self.rep_begin = 'N/A'
-        self.rep_end = 'N/A'
+    def openfile(self):
+        '''Creates a popup window where a file to open can be chosen.'''
+        content = OpenFile(footer=self.footer)
+        self.popup = Popup(title='Open file', content=content,
+                           size_hint=(.8, .8))
+        content.popup = self.popup
+        self.popup.open()
 
-        # Record.
-        self.rec_sourceip = 'N/A'
-        self.rec_count = 'N/A'
-        self.rec_disposition = 'N/A'
-        self.rec_ddkim = 'N/A'
-        self.rec_dspf = 'N/A'
-        self.rec_headerfrom = 'N/A'
-        self.rec_aspfdomain = 'N/A'
-        self.rec_aspfresult = 'N/A'
-        self.rec_adkimdomain = 'N/A'
-        self.rec_adkimresult = 'N/A'
 
-    def load(self, path, sel):
-        '''Loads the selected file stored in path.'''
-        self.reset_labels()
-        if path and sel:
-            try:
-                self.model.load(sel[0])
-            except ModelError:
-                return False
-            else:
-                self.set_policy_labels()
-                self.set_report_labels()
-                self.set_record_labels()
-                return True
+class OpenFile(BoxLayout):
+
+    '''Open file popup window.'''
+
+    footer = ObjectProperty()
+    popup = ObjectProperty()
+
+    def dismiss(self):
+        '''Dismisses the popup we're in.'''
+        self.popup.dismiss()
+
+    def load(self, filename):
+        '''Loads the file given to it.'''
+        if not filename:
+            return
+
+        try:
+            # Try to open file and get data.
+            print filename
+        except:
+            self.footer.text = 'Something failed!'
         else:
-            return False
-
-    def set_policy_labels(self):
-        '''Sets policy labels in the NUI using model data.'''
-        self.pol_domain = self.model.get_pol('domain')
-        self.pol_adkim = self.model.get_pol('adkim')
-        self.pol_aspf = self.model.get_pol('aspf')
-        self.pol_pct = self.model.get_pol('pct')
-        self.pol_sp = self.model.get_pol('sp')
-        self.pol_p = self.model.get_pol('p')
-
-    def set_report_labels(self):
-        '''Sets report labels in the NUI using model data.'''
-        self.rep_begin = get_time_value(self.model.get_rep('begin',
-                                                           'date_range'))
-        self.rep_end = get_time_value(self.model.get_rep('end', 'date_range'))
-        self.rep_reportid = self.model.get_rep('report_id')
-        self.rep_orgname = self.model.get_rep('org_name')
-        self.rep_email = self.model.get_rep('email')
-
-    def set_record_labels(self):
-        '''Sets record labels in the NUI using model data.'''
-        self.rec_sourceip = self.model.get_rec('source_ip', 'row')
-        self.rec_count = self.model.get_rec('count', 'row')
-        self.rec_disposition = self.model.get_rec('disposition', 'row',
-                                                  'policy_evaluated')
-        self.rec_ddkim = self.model.get_rec('dkim', 'row', 'policy_evaluated')
-        self.rec_dspf = self.model.get_rec('spf', 'row', 'policy_evaluated')
-        self.rec_headerfrom = self.model.get_rec('header_from', 'identifiers')
-        self.rec_aspfdomain = self.model.get_rec('domain', 'auth_results',
-                                                 'spf')
-        self.rec_aspfresult = self.model.get_rec('result', 'auth_results',
-                                                 'spf')
-        self.rec_adkimdomain = self.model.get_rec('domain', 'auth_results',
-                                                  'dkim')
-        self.rec_adkimresult = self.model.get_rec('result', 'auth_results',
-                                                  'dkim')
+            self.footer.text = 'File opened: {0}'.format(filename)
+            self.dismiss()
 
 
-def get_time_value(timestamp):
-    '''Convert the timestamp into a time and date.'''
-    return datetime.fromtimestamp(int(timestamp)).strftime('%d.%m.%Y')
+Builder.load_file('{0}/dmarcreport.kv'.format(cnf.KV_DIRECTORY))
