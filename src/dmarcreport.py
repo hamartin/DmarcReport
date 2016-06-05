@@ -45,6 +45,7 @@ class ImageButton(ButtonBehavior, Image):
 
     '''Kivy button with image instead of label.'''
 
+    body = ObjectProperty()
     footer = ObjectProperty()
     model = ObjectProperty()
 
@@ -78,7 +79,8 @@ class ImageButton(ButtonBehavior, Image):
     def openfile(self):
         '''Creates a popup window where a file to open can be chosen.'''
         content = OpenFile(footer=self.footer, reportb=self.reportb,
-                           recordb=self.recordb, policyb=self.policyb)
+                           recordb=self.recordb, policyb=self.policyb,
+                           body=self.body)
         self.popup = Popup(title='Open file', content=content,
                            size_hint=(.8, .8))
         content.popup = self.popup
@@ -90,6 +92,7 @@ class OpenFile(BoxLayout):
 
     '''Open file popup window.'''
 
+    body = ObjectProperty()
     footer = ObjectProperty()
     model = ObjectProperty()
     popup = ObjectProperty()
@@ -115,11 +118,13 @@ class OpenFile(BoxLayout):
             self.reportb.disabled = True
             self.recordb.disabled = True
             self.policyb.disabled = True
+            self.body.bodydata.clear_widgets()
             self.footer.text = 'Error! {0}'.format(err.message)
         else:
             self.reportb.disabled = False
             self.recordb.disabled = False
             self.policyb.disabled = False
+            self.body.reload('report', force=True)
             self.footer.text = 'File opened: {0}'.format(filename)
             self.dismiss()
 
@@ -138,9 +143,9 @@ class Body(BoxLayout):
 
         self.loaded = ''
 
-    def reload(self, group):
+    def reload(self, group, force=False):
         '''Reloads the group widgets if group not the same as loaded.'''
-        if group == self.loaded:
+        if force is False and group == self.loaded:
             return
         else:
             self.loaded = group
@@ -165,7 +170,7 @@ class Groups(BoxLayout):
     def __init__(self, **kwargs):
         # super(Groups, self).__init__(**kwargs)
         BoxLayout.__init__(self, **kwargs)
-        self.size_hint = (1, .9)
+        self.size_hint_y = .9
         self.orientation = 'vertical'
 
         self.model = None

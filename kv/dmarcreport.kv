@@ -30,6 +30,7 @@
                     reportb: _reportb
                     recordb: _recordb
                     policyb: _policyb
+                    body: _body
                     size_hint: .2, .5
                     on_release: self.openfile()
 
@@ -124,147 +125,226 @@
     halign: 'right'
 
 <Policy>:
-    orientation: 'horizontal'
 
-    GridLayout:
-        cols: 2
-        rows: 6
-        size_hint: 1, .5
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
 
-        LabelL
-            text: 'Domain'
-        LabelR:
-            text: root.pol_domain
-        LabelL:
-            text: 'Adkim'
-        LabelR:
-            text: root.pol_adkim
-        LabelL:
-            text: 'Aspf'
-        LabelR:
-            text: root.pol_aspf
-        LabelL:
-            text: 'Pct'
-        LabelR:
-            text: root.pol_pct
-        LabelL:
-            text: 'Sp'
-        LabelR:
-            text: root.pol_sp
-        LabelL:
-            text: 'P'
-        LabelR:
-            text: root.pol_p
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: .5
 
-    BoxLayout:
-        size_hint: 1, .5
+            BoxLayout:
+                orientation: 'vertical'
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL
+                        text: 'Domain'
+                    LabelR:
+                        text: root.pol_domain
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Adkim'
+                    LabelR:
+                        text: root.pol_adkim
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Aspf'
+                    LabelR:
+                        text: root.pol_aspf
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Pct'
+                    LabelR:
+                        text: root.pol_pct
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Sp'
+                    LabelR:
+                        text: root.pol_sp
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'P'
+                    LabelR:
+                        text: root.pol_p
 
 <Record>:
-    orientation: 'horizontal'
 
     BoxLayout:
         orientation: 'horizontal'
-        spacing: '20sp'
+        spacing: '35sp'
+        padding: '10sp', '10sp', '10sp', '10sp'
 
-        GridLayout:
-            cols: 2
-            rows: 8
-            size_hint: .5, 1
+        BoxLayout:
+            orientation: 'vertical'
 
-            LabelL:
-                text: 'Row'
-            Label
-            LabelL:
-                text: 'Source IP'
-            LabelR:
-                text: root.rec_sourceip
-            LabelL:
-                text: 'Count'
-            LabelR:
-                text: root.rec_count
-            LabelL:
-                text: 'Policy Evaluated'
-            Label
-            LabelL:
-                text: 'Disposition'
-            LabelR:
-                text: root.rec_disposition
-            LabelL:
-                text: 'DKIM'
-            LabelR:
-                text: root.rec_ddkim
-            LabelL:
-                text: 'SPF'
-            LabelR:
-                text: root.rec_dspf
-            LabelL:
-                text: 'Identifiers'
-            Label
+            Label:
+                font_size: '20sp'
+                text: '1. Row'
 
-        GridLayout:
-            cols: 2
-            rows: 8
-            size_hint: .5, 1
+            BoxLayout:
+                orientation: 'horizontal'
 
-            LabelL:
-                text: 'Header From'
-            LabelR:
-                text: root.rec_headerfrom
-            LabelL:
-                text: 'Auth Results'
-            Label
-            LabelL:
-                text: 'SPF'
-            Label
-            LabelL:
-                text: 'Domain'
-            LabelR:
-                text: root.rec_aspfdomain
-            LabelL:
-                text: 'Result'
-            LabelR:
-                text: root.rec_aspfresult
-            LabelL:
-                text: 'DKIM'
-            Label
-            LabelL:
-                text: 'Domain'
-            LabelR:
-                text: root.rec_adkimdomain
-            LabelL:
-                text: 'Result'
-            LabelR:
-                text: root.rec_adkimresult
+                LabelL:
+                    text: 'Source IP'
+                LabelR:
+                    text: root.rec_sourceip
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Count'
+                LabelR:
+                    text: root.rec_count
+
+            Label:
+                font_size: '16sp'
+                text: '1.1 Policy Evaluated'
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Disposition'
+                LabelR:
+                    text: root.rec_disposition
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'DKIM'
+                LabelR:
+                    text: root.rec_ddkim
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'SPF'
+                LabelR:
+                    text: root.rec_dspf
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            Label:
+                text: '2. Identifiers'
+                font_size: '20sp'
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Header From'
+                LabelR:
+                    text: root.rec_headerfrom
+
+            Label:
+                text: '3. Auth Results'
+                font_size: '20sp'
+
+            Label:
+                text: '3.1 SPF'
+                font_size: '16sp'
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Domain'
+                LabelR:
+                    text: root.rec_aspfdomain
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Result'
+                LabelR:
+                    text: root.rec_aspfresult
+
+            Label:
+                text: '3.2 DKIM'
+                font_size: '16sp'
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Domain'
+                LabelR:
+                    text: root.rec_adkimdomain
+
+            BoxLayout:
+                orientation: 'horizontal'
+
+                LabelL:
+                    text: 'Result'
+                LabelR:
+                    text: root.rec_adkimresult
 
 <Report>:
-    orientation: 'vertical'
 
-    GridLayout:                                         
-        cols: 2                                         
-        rows: 7                                         
-                                                                                    
-        LabelL:                                         
-            text: 'Org Name'                            
-        LabelR:                                         
-            text: root.rep_orgname                      
-        LabelL:                                         
-            text: 'Email'                               
-        LabelR:                                         
-            text: root.rep_email                        
-        LabelL:                                         
-            text: 'Report ID'                           
-        Label                                           
-        Label                                           
-        LabelR:                                         
-            text: root.rep_reportid                     
-        LabelL:                                         
-            text: 'Date Range'                          
-        Label                                           
-        LabelL:                                         
-            text: 'Begin'                               
-        LabelR:                                         
-            text: root.rep_begin                        
-        LabelL:                                         
-            text: 'End'                                 
-        LabelR:                                         
-            text: root.rep_end   
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint_x: .5
+            orientation: 'horizontal'
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Org Name:'
+                    LabelR:
+                        text: root.rep_orgname
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: 'Email:'
+                    LabelR:
+                        text: root.rep_email
+
+                LabelL:
+                    text: 'Report ID:'
+
+                LabelR:
+                    text: root.rep_reportid
+
+                Label:
+                    font_size: '20sp'
+                    text: '1. Date Range'
+
+                BoxLayout:
+                    orientation: 'horizontal'
+
+                    LabelL:
+                        text: '1.1 Begin: {0}'.format(root.rep_begin)
+                    LabelR:
+                        text: '1.2 End: {0}'.format(root.rep_end)
