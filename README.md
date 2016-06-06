@@ -1,6 +1,8 @@
 # Dmarc Report
 
-A simple application to make DMARC XML files human readble.
+A simple application to make DMARC XML files human readble. The DMARC XML can
+be opened while packaged as a ZIP file as long as the XML is the only file
+within that ZIP file.
 
 ## Requirements
 
