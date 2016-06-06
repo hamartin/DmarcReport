@@ -10,6 +10,8 @@ A simple application to make DMARC XML files human readble.
 ## Misc
 
 Code testet on Fedora 23 using Python 2.7.11 and Kivy 1.9.1.
+I try in all my code to follow the versioning rules described in on
+[semver.org][01].
 
 ## Repository
 
@@ -23,3 +25,6 @@ The master branch always contains the latest stable of this kivy application.
 The kivy branch contains the latest code for this kivy application and the
 tkinter branch contains the latest code for the tkinter code when this
 application was actively being developed using tkinter instead of kivy.
+
+
+[01]: http://semver.org/ "Semantic Versioning."
