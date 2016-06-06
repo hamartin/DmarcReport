@@ -8,6 +8,11 @@ Picture of
 [Dmarc Report](http://hamartin.github.io/DmarcReport/images/dmarcreport.jpg) in
 use.
 
+## Contact information
+
+You can contact me at hamartin@moshwire.com. Please refer to Dmarc Report in
+the title if contacting me in context of this application.
+
 ## Requirements
 
     1. python-libxml
