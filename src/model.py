@@ -1,7 +1,11 @@
 # -*- coding: UTF-8 -*-
 # File name: model.py
 
-'''Dmarc Report model module.'''
+'''
+Dmarc Report model module.
+
+Copyright 2016, Hans Åge Martinsen <hamartin@moshwire.com>
+'''
 
 import zipfile
 

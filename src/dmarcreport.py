@@ -1,7 +1,11 @@
 # -*- coding: UTF-8 -*-
 # File name: dmarcreport.py
 
-'''Dmarc Report module.'''
+'''
+Dmarc Report module.
+
+Copyright 2016, Hans Åge Martinsen <hamartin@moshwire.com>
+'''
 
 import kivy
 kivy.require('1.9.1')
