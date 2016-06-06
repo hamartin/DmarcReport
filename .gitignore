@@ -8,3 +8,5 @@ src/old/*
 
 # Vim swap files.
 *.swp
+
+_site
