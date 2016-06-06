@@ -4,6 +4,9 @@ A simple application to make DMARC XML files human readble. The DMARC XML can
 be opened while packaged as a ZIP file as long as the XML is the only file
 within that ZIP file.
 
+Picture of the application in use:
+[Dmarc Report](http://hamartin.github.io/DmarcReport/images/dmarcreport.jpg)
+
 ## Requirements
 
     1. python-libxml
@@ -30,7 +33,3 @@ application was actively being developed using tkinter instead of kivy.
 
 
 [01]: http://semver.org/ "Semantic Versioning."
-
-## Picture of application in use.
-
-![Dmarc Report](http://hamartin.github.io/DmarcReport/images/dmarcreport.jpg)
