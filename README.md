@@ -16,7 +16,12 @@ the title if contacting me in context of this application.
 ## Requirements
 
     1. python-libxml
-    2. kivy >= 1.9.1
+    2. kivy >= 1.9.1 (python-kivy)
+
+    At the current time, Fedora does not include kivy in their repositories, so
+    you will have to install it from some other source.
+
+    It seems this is also true for Debian based distributions.
 
 ## Misc
 
