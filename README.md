@@ -4,6 +4,10 @@ A simple application to make DMARC XML files human readble. The DMARC XML can
 be opened while packaged as a ZIP file as long as the XML is the only file
 within that ZIP file.
 
+Picture of
+[Dmarc Report](http://hamartin.github.io/DmarcReport/images/dmarcreport.jpg) in
+use.
+
 ## Contact information
 
 You can contact me at hamartin@moshwire.com. Please refer to Dmarc Report in
