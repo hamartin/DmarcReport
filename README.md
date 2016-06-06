@@ -30,3 +30,7 @@ application was actively being developed using tkinter instead of kivy.
 
 
 [01]: http://semver.org/ "Semantic Versioning."
+
+## Picture of application in use.
+
+![Dmarc Report](http://hamartin.github.io/DmarcReport/images/dmarcreport.jpg)
