@@ -25,6 +25,8 @@ Copyright 2016, Hans Åge Martinsen <hamartin@moshwire.com>
 import kivy
 kivy.require('1.9.1')
 
+import os
+
 from datetime import datetime
 from kivy.app import App
 from kivy.core.window import Window
@@ -278,7 +280,8 @@ class Policy(Groups):
         self.pol_p = self.model.get_pol('p')
 
 
-Builder.load_file('{0}/dmarcreport.kv'.format(cnf.KV_DIRECTORY))
+Builder.load_file(os.path.join(os.path.dirname(__file__), cnf.KV_DIRECTORY,
+                               'dmarcreport.kv'))
 
 
 def get_time_value(timestamp):
