@@ -22,7 +22,12 @@ Copyright 2016, Hans Åge Martinsen <hamartin@moshwire.com>
     along with Dmarc Report.  If not, see <http://www.gnu.org/licenses/>
 '''
 
-KV_DIRECTORY = '../kv'
+import os
 
-IMAGENORMAL = 'img/openfile-gr.png'
-IMAGEOVER = 'img/openfile-wh.png'
+KV_DIRECTORY = '../kv'
+IMG_DIRECTORY = '../img'
+
+IMAGENORMAL = os.path.join(os.path.dirname(__file__), IMG_DIRECTORY,
+                           'openfile-gr.png')
+IMAGEOVER = os.path.join(os.path.dirname(__file__), IMG_DIRECTORY,
+                         'openfile-wh.png')
