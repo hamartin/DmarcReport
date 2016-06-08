@@ -44,3 +44,10 @@ application was actively being developed using tkinter instead of kivy.
 
 
 [01]: http://semver.org/ "Semantic Versioning."
+
+## Updates
+
+09.06.2016: All paths were relative to application root folder, meaning that if
+            ran the application from somewhere else, the images and files
+            would not open correctly. Fixed that by looking up __file__ and
+            making the path relative to that file.
