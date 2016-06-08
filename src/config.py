@@ -24,5 +24,5 @@ Copyright 2016, Hans Åge Martinsen <hamartin@moshwire.com>
 
 KV_DIRECTORY = '../kv'
 
-IMAGENORMAL = 'img/openfile-gr.png'
-IMAGEOVER = 'img/openfile-wh.png'
+IMAGENORMAL = '../img/openfile-gr.png'
+IMAGEOVER = '../img/openfile-wh.png'
