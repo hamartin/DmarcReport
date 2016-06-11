@@ -80,7 +80,7 @@ class ImageButton(ButtonBehavior, Image):
         self.source = cnf.IMAGENORMAL
         self.popup = None
 
-        for key, val in kwargs.iteritems():
+        for key, val in iter(kwargs.items()):
             if key == 'source':
                 self.source = val
 
@@ -135,7 +135,7 @@ class OpenFile(BoxLayout):
 
         try:
             self.model.load(filename)
-        except ModelFileError, err:
+        except ModelFileError as err:
             self.reportb.disabled = True
             self.recordb.disabled = True
             self.policyb.disabled = True
