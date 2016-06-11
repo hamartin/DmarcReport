@@ -190,7 +190,8 @@ class Groups(BoxLayout):
 
     def __init__(self, **kwargs):
         # super(Groups, self).__init__(**kwargs)
-        BoxLayout.__init__(self, **kwargs)
+        # BoxLayout.__init__(self, **kwargs)
+        BoxLayout.__init__(self)
         self.size_hint_y = .9
         self.orientation = 'vertical'
 
