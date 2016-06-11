@@ -48,7 +48,7 @@ class Model(object):
             if zipfile.is_zipfile(filename):
                 try:
                     fpz = zipfile.ZipFile(filename)
-                except IOError, err:
+                except IOError as err:
                     raise ModelFileError(err)
                 else:
                     if len(fpz.infolist()) != 1:
@@ -60,7 +60,7 @@ class Model(object):
             else:
                 try:
                     fpn = open(filename, 'r')
-                except IOError, err:
+                except IOError as err:
                     raise ModelFileError(err)
         else:
             raise ModelFileError('File name is not ok')
@@ -117,7 +117,7 @@ def get_root(fpn):
 
     try:
         tree = ElementTree.parse(fpn)
-    except ParseError, err:
+    except ParseError as err:
         raise ModelError(err)
     root = tree.getroot()
     return root
