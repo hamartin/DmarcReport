@@ -135,7 +135,7 @@ class OpenFile(BoxLayout):
 
         try:
             self.model.load(filename)
-        except ModelFileError, err:
+        except ModelFileError as err:
             self.reportb.disabled = True
             self.recordb.disabled = True
             self.policyb.disabled = True
