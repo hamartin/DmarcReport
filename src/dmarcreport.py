@@ -80,7 +80,7 @@ class ImageButton(ButtonBehavior, Image):
         self.source = cnf.IMAGENORMAL
         self.popup = None
 
-        for key, val in kwargs.iteritems():
+        for key, val in iter(kwargs.items()):
             if key == 'source':
                 self.source = val
 
